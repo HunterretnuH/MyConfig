@@ -222,6 +222,9 @@ mode "resize" {
 }
 bindsym $mod+r mode "resize"
 
+#ADDITIONAL KEY BINDINGS
+bindsym $mod+m exec mpv $(wl-paste)
+
 #
 # Borders:
 #

@@ -6,11 +6,8 @@ export XDG_CONFIG_HOME="$HOME/.config" EDITOR="nvim"
 
 #required for correct bindings to be loaded for fzf (even though it will be set later by my .inputrc)
 set -o vi
-#loads basic key-bindings
-source /usr/share/fzf/key-bindings.bash
-#enables completion like "cd ~/**<TAB>"
-source /usr/share/fzf/completion.bash 
 
+#ALIASES
 alias v='nvim'
 alias ls='ls --color --group-directories-first'
 alias l='ls -lh'
@@ -21,9 +18,19 @@ alias k='kitty --detach'
 alias kp="sudo kill \$(ps -A|fzf|awk '{print \$1}')"
 alias kkp="sudo kill -s SIGKILL \$(ps -A|fzf|awk '{print \$1}')"
 
+#TEMPORARY ALIASES
+alias vpn_zut="sudo openvpn ~/.config/vpn/wi_zut_vpn.ovpn"
+alias rdp_zut="xfreerdp /v:rdp.wi.zut.edu.pl /u:gm32673 /dynamic-resolution"
 
-LS_COLORS=$LS_COLORS:'di=1;4;34'
+#COLORS FOR LS AND RANGER
+LS_COLORS=$LS_COLORS:'di=1;34'
 export LS_COLORS
+
+#FZF
+#loads basic key-bindings
+source /usr/share/fzf/key-bindings.bash
+#enables completion like "cd ~/**<TAB>"
+source /usr/share/fzf/completion.bash 
 
 #PURELINE
 if [ "$TERM" != "linux" ]; then

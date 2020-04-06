@@ -1,15 +1,15 @@
 #!/bin/sh
-
 #This script creates soft links to config files and directories if required.
 #If location of config changes the script should be rerun.
 #This script shouldn't be moved outside repository
 
-#CONFIGURATION START (1 - ENABLED, 2 - DISABLED):
+#CONFIGURATION START (0 - DISABLED, 1 - ENABLED):
     INPUTRC=1
     BASHRC=1
     SWAY=1
     KITTY=1
     NEOVIM=1
+    NEOVIM_NOTES=1
     QUTEBROWSER=1
     ZATHURA=1
     RANGER=1
@@ -45,6 +45,14 @@ fi
 if [ $NEOVIM -eq 1 ]; then
     mkdir -p ~/.config/nvim/
     ln -sf $(pwd)/nvim/init.vim ~/.config/nvim/
+fi
+
+#NEOVIM_NOTES
+if [ $NEOVIM -eq 1 ]; then
+    mkdir -p ~/.config/nvim/ftdetect
+    ln -sf $(pwd)/nvim/ftdetect/notes.vim ~/.config/nvim/ftdetect/
+    mkdir -p ~/.config/nvim/after/ftplugin
+    ln -sf $(pwd)/nvim/after/ftplugin/notes.vim ~/.config/nvim/after/ftplugin
 fi
 
 #QUTEBROWSER

@@ -27,6 +27,7 @@ pacman -S wireshark-qt
 sudo usermod -a -G wireshark hunter     #a- append (used only with conjuncture with G - groups)
 sudo pacman -S aircrack-ng  #maybe not needed - will see if monitor mode starts working correctly
 sudo pacman -S zip
+sudo pacman -S valgrind
 
 #CCLS
 pacman -S clang llvm llvm-libs
@@ -108,9 +109,36 @@ ctl.!default {
 
 Not sure what was really required. After reboot it started working. TODO:Anlayze and fix.
 
+#Solution for openvpn not adding DNSes provided during connection to resolv.conf
+Add lines below to .ovpn/.conf file that is used for vpn connection.
+Modification of client.up file is also required - "-p" flag has to be removed from resolvconf command. See man 8 resolvconf
+user nobody
+group nobody 
+script-security 2
+up /usr/share/openvpn/contrib/pull-resolv-conf/client.up
+plugin /usr/lib/openvpn/plugins/openvpn-plugin-down-root.so "/usr/share/openvpn/contrib/pull-resolv-conf/client.down tun0"
+
 #COMMANDS
 sudo openvpn ~/.config/vpn/wi_zut_vpn.ovpn
 xfreerdp /v:rdp.wi.zut.edu.pl /u:gm32673 /dynamic-resolution
 sudo wpa_supplicant -B -c /etc/wpa_supplicant/Lesniczowka.conf -i wlp1s0
 redshift -O 6500 -b 0.3
 kill $(ps -A | grep -e wpa -e dhc | awk '{printf $1; printf " "}')
+
+
+New apps to use:
+KeepassXC           #password manager
+Syncthing           #synchronize key storage files
+SSHFS               #just check
+Protonmail + Thunderbird + 5$/month to use local client;
+EteSync             #contacts and calendar
+Nexcloud            #still worth checking as is has mail, calendar, file sync, contacts?, bookmards
+
+swayshot.sh
+wofi-hg (AUR)
+waybar
+docker
+clipman
+
+
+

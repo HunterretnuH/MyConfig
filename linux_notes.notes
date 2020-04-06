@@ -1,87 +1,75 @@
 #ARCH_INSTALL
 
-Settings keymap for console:
-	ls /usr/share/kbd/keymaps/**/*.map.gz		#list avaiable keymaps
-	loadkeys pl									#set polish keymap
-
-	Note:The program loadkeys reads the file or files specified by filename. Its main purpose is to load the kernel keymap for the console.
-
-	
-Setting atomatic time synchronization:
-	timedatectl set-ntp true					#activate ntp deamon which automaticly synchronises time
-
-	
-Connecting to internet:
-	ip link                                 	#shows list of all network interfaces
-	iw link set <device> up 					#changes state of interfaces
-	iw dev 										#shows list od wireless network interfaces
-	iw <device> scan							#scans for wireless networks and lists them
-	iw dev interface connect "your_essid"		#connect to unprotected wi-fi
-
-	
-When wireless network is protected by WPA2 password wpa_supplicant has to be used:
+Settings keymap for console:{{{
+	ls /usr/share/kbd/keymaps/**/*.map.gz		                                        #list avaiable keymaps
+	loadkeys pl									                                        #set polish keymap
+	                                                                                    #Note:The program loadkeys reads the file or files specified by filename. Its main purpose is to load the kernel keymap for the console.}}}
+Setting atomatic time synchronization:{{{
+	timedatectl set-ntp true					                                        #activate ntp deamon which automaticly synchronises time}}}
+Connecting to internet:{{{
+	ip link                                 	                                        #shows list of all network interfaces
+	iw link set <device> up 					                                        #changes state of interfaces
+	iw dev 										                                        #shows list od wireless network interfaces
+	iw <device> scan							                                        #scans for wireless networks and lists them
+	iw dev interface connect "your_essid"		                                        #connect to unprotected wi-fi}}}
+When wireless network is protected by WPA2 password wpa_supplicant has to be used:{{{
 	wpa_passphrase my_essid my_passphrase > /etc/wpa_supplicant/my_essid.conf			#save configuration file for network
-	wpa_supplicant -B -c /etc/wpa_supplicant/my_essid.conf -i my_wireless_device		#connects to wireless network (c - specify config file, B - run in backgrond, i - interface to listen on)
-
-	
-Static or Dynamic IP addresing has to  be used:
-	dhcpcd										#starts DHCP deamon that automatically gets IP addresss
-
-	
-Wiping drive [optional]:
+	wpa_supplicant -B -c /etc/wpa_supplicant/my_essid.conf -i my_wireless_device		#connects to wireless network (c - specify config file, B - run in backgrond, i - interface to listen on)}}}
+Static or Dynamic IP addresing has to  be used:{{{
+	dhcpcd										                                        #starts DHCP deamon that automatically gets IP addresss}}}
+Wiping drive [optional]:{{{
 	Normal way:	
-		dd if=/dev/urandom of=/dev/sdX status=progress										#Copies from if to of - it fills drive with random data. /dev/zero may be used to fill it with zeros. Staus level "progress" shows progres of copying. if=FILE - read from FILE instead of stdin, of=FILE - write to FILE instead of stdout.
+		dd if=/dev/urandom of=/dev/sdX status=progress
+                                                                                        #Copies from if to of - it fills drive with random data. /dev/zero may be used to fill it with zeros. Staus level "progress" shows progres of copying. if=FILE - read from FILE instead of stdin, of=FILE - write to FILE instead of stdout.
 
 	In preparation for encryption:
-		cryptsetup open --type plain -d /dev/urandom /dev/<block-device> to_be_wiped		#Opens/maps container "to_be_wiped" using plain mode encryption.d - specify key_file. Plain mode does not have any header so dm-crypt is just decrypting derive using /dev/urandom as a key_file.
-		dd if=/dev/zero of=/dev/mapper/to_be_wiped status=progress							#Fills container with zeros. Because container is decryped the disk itself is not filled with zeros but with random data.
-		cryptsetup close to_be_wiped														#Closes container and encrypts it. Whole drive is now filled with random unrecognizable data.
-	
-	
-Disk partitioning (MBR):
-	lsblk										#Lists all block devices. Block device is adevice abstracted by kernel that works in similar way hard drive where you read and write one block of data at a time.
-	fdisk -l									#Lists disks
-	fdisk /dev/sdX								#Starts fdisk where you can modify specified device (delete/create partitions etc.)
+		cryptsetup open --type plain -d /dev/urandom /dev/<block-device> to_be_wiped
+                                                                                        #Opens/maps container "to_be_wiped" using plain mode encryption.d - specify key_file. Plain mode does not have any header so dm-crypt is just decrypting derive using /dev/urandom as a key_file.
+		dd if=/dev/zero of=/dev/mapper/to_be_wiped status=progress	
+                                                                                        #Fills container with zeros. Because container is decryped the disk itself is not filled with zeros but with random data.
+		cryptsetup close to_be_wiped													#Closes container and encrypts it. Whole drive is now filled with random unrecognizable data.}}}
+Disk partitioning (MBR):{{{
+	lsblk									
+                                                            #Lists all block devices. Block device is adevice abstracted by kernel that works in similar way hard drive where you read and write one block of data at a time.
+	fdisk -l								                #Lists disks
+	fdisk /dev/sdX							                #Starts fdisk where you can modify specified device (delete/create partitions etc.)
 
 	Note:
 	MBR Layout Example (240GB drive):
-	/dev/sda1	200MiB - for /boot				#It is a boot mount point. It is especially usefull if you want to have both /boot and /root on separate partitions and both encrypted. Remember to set up boot flag even when encrypted.
-	/dev/sda2	8GiB   - for swap				#Boot partition. It is especially usefull if you want to have both boot and root separated and both encrypted. Remember to set up boot flag even when encrypted.
+	/dev/sda1	200MiB - for /boot				                                        
+                                                            #It is a boot mount point. It is especially usefull if you want to have both /boot and /root on separate partitions and both encrypted. Remember to set up boot flag even when encrypted.
+	/dev/sda2	8GiB   - for swap			                
+                                                            #Boot partition. It is especially usefull if you want to have both boot and root separated and both encrypted. Remember to set up boot flag even when encrypted.
 	/dev/sda3	30GiB  - for /root
-	/dev/sda4   200GiB - for /home
-	
-NEW Disk partitioning (GPT):
+	/dev/sda4   200GiB - for /home}}}
+NEW Disk partitioning (GPT):{{{
 
 	Note:
 	GPT Layout Example (240GB drive):
-	/dev/sda1	260MiB - for /boot/efi				#Set boot flag/ efi GUID type. TODO - verify if flag even exists in GPT and what it is exactly(I think it was 1 byte code at the start of partition or so. Windows uses 25MiB, but reserves 100MiB. Most linux distributions reccomand 477MiB, but this is overkill. Linux will need around 200MiB but only when there is no separate boot partition. So with separate boot it will be enough for dual boot.
-	/dev/sda1	200MiB - for /boot					#Do not set boot flag / efi GUID type. TODO - verify
+	/dev/sda1	260MiB - for /boot/efi				                                        
+                                                            #Set boot flag/ efi GUID type. TODO - verify if flag even exists in GPT and what it is exactly(I think it was 1 byte code at the start of partition or so. Windows uses 25MiB, but reserves 100MiB. Most linux distributions reccomand 477MiB, but this is overkill. Linux will need around 200MiB but only when there is no separate boot partition. So with separate boot it will be enough for dual boot.
+	/dev/sda1	200MiB - for /boot			                #Do not set boot flag / efi GUID type. TODO - verify
 	/dev/sda2	8GiB   - for swap			
 	/dev/sda3	30GiB  - for /root
-	/dev/sda4   200GiB - for /home
-
-	
-Encrypting partitions [optional]:
-	cryptsetup -y -v luksFormat /dev/sdxX					#Creates LUKS cointainer and its header. v - verbose, y - query for password twice. Add "--type luks1" after luksFormat if you are encrypting partition that has to be decrypted by GRUB (partition where boot mountpoint is).
+	/dev/sda4   200GiB - for /home}}}
+Encrypting partitions [optional]:{{{
+	cryptsetup -y -v luksFormat /dev/sdxX					
+                                                            #Creates LUKS cointainer and its header. v - verbose, y - query for password twice. Add "--type luks1" after luksFormat if you are encrypting partition that has to be decrypted by GRUB (partition where boot mountpoint is).
 	cryptsetup open /dev/sdxX <name>						#Opens LUKS container. Because LUKS cointeiner has a header it will be recognized and cryptsetup wil prompt for password.
 	mkfs.ext4 /dev/mapper/<name>							#Formats container using ext4 file system.
 	mount /dev/mapper/<name> /mnt							#Mounting container to mountpoint.
 	umount /mnt												#Unmounting container.
 	cryptsetup close <name>									#Encrypting container by closing it.
-	[dd if=/dev/urandom of=/dev/sdxX bs=512 count=40960]	#Overwrites first 20MiB of memory on specified partition. Largest LUKS header as of now is 16MiB so it is a sure way to overwrite it.
-
-	
-Formatting drives:
-	mkfs.ext4 / dev/sdXX                       	#Formats partition/device sdaX to ext4 file system
-	mkswap /dev/sdaX                           	#Formats partition/device sdaX to linux swap. In practice linux swap is just unallocated disk space without any filesystem. This command only ads header that is descripting this space. Can be used on swapfile.
-
-	
-Making swap partition:	
-	swapon /dev/sdaX                            #Specifys device on which paging and swapping are to take place. Can be used on swapfile. Device/fie must be formated using mkswap. Use swapon --show option to list swap devices.
-	swapoff /dev/sdaX							#Specifys device on which paging and swapping are to be disabled.
-
-	
-Automatic decryption of swap during boot when keyfile is on initramfs[optional]:
+	[dd if=/dev/urandom of=/dev/sdxX bs=512 count=40960]	#Overwrites first 20MiB of memory on specified partition. Largest LUKS header as of now is 16MiB so it is a sure way to overwrite it.}}}
+Formatting drives:{{{
+	mkfs.ext4 / dev/sdXX                       	            #Formats partition/device sdaX to ext4 file system
+	mkswap /dev/sdaX                           	            
+                                                            #Formats partition/device sdaX to linux swap. In practice linux swap is just unallocated disk space without any filesystem. This command only ads header that is descripting this space. Can be used on swapfile.}}}
+Making swap partition:	{{{
+	swapon /dev/sdaX                                        
+                                                            #Specifys device on which paging and swapping are to take place. Can be used on swapfile. Device/fie must be formated using mkswap. Use swapon --show option to list swap devices.
+	swapoff /dev/sdaX							            #Specifys device on which paging and swapping are to be disabled.}}}
+Automatic decryption of swap during boot when keyfile is on initramfs[optional]:{{{
 	Create hook by creating file /etc/initcpio/hooks/openswap and add there:
 
 		run_hook ()
@@ -102,11 +90,10 @@ Automatic decryption of swap during boot when keyfile is on initramfs[optional]:
 		HELPEOF
 	}
 	
-	Add the hook openswap in the HOOKS array in /etc/mkinitcpio.conf, before filesystem but after encrypt. Do not forget to add the resume hook after openswap. 
-	
-	
-Add keyfile to initramfs and add new key slot for it:
-	dd bs=512 count=4 if=/dev/random of=<path_to_new_keyfile> iflag=fullblock	#bs=BYTES - read and write up to BYTES bytes at a time (default: 512), count=N - copy only N input blocks, iflag=fullblock - set flag fullblock for input to accumulate full blocks of input (dd makes a single read() call to read each block which was appropriate in past when reading from a tapes).
+	Add the hook openswap in the HOOKS array in /etc/mkinitcpio.conf, before filesystem but after encrypt. Do not forget to add the resume hook after openswap. }}}
+Add keyfile to initramfs and add new key slot for it:{{{
+	dd bs=512 count=4 if=/dev/random of=<path_to_new_keyfile> iflag=fullblock	
+                                                                                #bs=BYTES - read and write up to BYTES bytes at a time (default: 512), count=N - copy only N input blocks, iflag=fullblock - set flag fullblock for input to accumulate full blocks of input (dd makes a single read() call to read each block which was appropriate in past when reading from a tapes).
 	chmod 600 /crypto_keyfile.bin												#Change permissions for keyfile.
 	chmod 600 /boot/initramfs-linux*											#Change permissions for initramfs. By default initramfs permissions are set to 644 which allows any user to dump the keyfile.
 	
@@ -114,14 +101,13 @@ Add keyfile to initramfs and add new key slot for it:
 
 	cryptsetup -v luksFormat --type luks2 /dev/sdxX [path_to_keyfile]			#Formats device and asks for passphrase. If path_to_keyfile is provide it will be used instead of passphrase.
 	or
-	cryptsetup luksAddKey /dev/<device> (/path/to/<additionalkeyfile>)			#If passphrase is already created then it can be used to add new key slot to device. If /path/to/<additionalkeyfile> is given (i.e. /crypto_keyfile.bin), cryptsetup will add a new keyslot for <additionalkeyfile>. Otherwise a new passphrase will be prompted for twice. luksChangeKey/luksRemoveKey can be used to to change/remove it later.
+	cryptsetup luksAddKey /dev/<device> (/path/to/<additionalkeyfile>)			
+                                                                                #If passphrase is already created then it can be used to add new key slot to device. If /path/to/<additionalkeyfile> is given (i.e. /crypto_keyfile.bin), cryptsetup will add a new keyslot for <additionalkeyfile>. Otherwise a new passphrase will be prompted for twice. luksChangeKey/luksRemoveKey can be used to to change/remove it later.
  
 	To check content of initramfs image make a copy of initramfs-linux.img (to not have to pack it again later):
 		gzip -d initramfs-linux.gz												#Unpacks archive. Before using it change file extension from .img to .gz so gzip won't complain about incorrect suffix.
-		cpio -idmv < initramfs-linux											#To unpack cpio archive. pacman -S cpio to install.
- 
-	
-Decrypting root partition during boot [optional]:
+		cpio -idmv < initramfs-linux											#To unpack cpio archive. pacman -S cpio to install.}}}
+Decrypting root partition during boot [optional]:{{{
 	Add following hooks to /etc/mkinitcpio.conf to HOOKS=(...) and regenerate initramfs after saving changes:
 	encrypt											#Always needed when encrypting the root partition, or a partition that needs to be mounted before root. In other cases system initialization scripts like /etc/crypttab take care of unlocking other encrypted partitions. It must be placed after the udev hook. 
 	keyboard										#Needed to make keyboards work in early userspace. 
@@ -135,21 +121,16 @@ Decrypting root partition during boot [optional]:
 	resume=device									#It should point to decrypted swap device.
 
 	
-	Note: Good page with description of encrypt and sd-encrypt hook, required kernel parameters and crypttab: https://wiki.archlinux.org/index.php/Dm-crypt/System_configuration#Boot_loader
- 
-Decrypting home partition automatically after initial boot [optional]:
+	Note: Good page with description of encrypt and sd-encrypt hook, required kernel parameters and crypttab: https://wiki.archlinux.org/index.php/Dm-crypt/System_configuration#Boot_loader}}}
+Decrypting home partition automatically after initial boot [optional]:{{{
 	Add following pharse to /etc/crypttab:
-	home	/dev/sdX	/<path_to_keyfile>			#At this point / means root directory.	
-
-	
-Installing base and mouting all devices to generate fstab file:
+	home	/dev/sdX	/<path_to_keyfile>			#At this point / means root directory.	}}}
+Installing base and mouting all devices to generate fstab file:{{{
 	mount /dev/sdaX /mnt                	        #Mounts sdaX to mountpoint /mnt. For encrypted devices use /dev/mapper/<device> instead of /dev/sdaX (mount /dev/mapper/chome /mnt/home).
 	pacstrap /mnt base                      	    #installs base packages. After space more packages can be added i.e.base-devel
 	genfstab -U /mnt >> /mnt/etc/fstab          	#generates fstab file which contains information how devices have to be mounted.U - UUID, L - labels are used.
-	arch-chroot /mnt                           		#chroot into /mnt - changes root directory for currently running processes and their children
-
-	
-Configuration:
+	arch-chroot /mnt                           		#chroot into /mnt - changes root directory for currently running processes and their children}}}
+Configuration:{{{
 	Set timezone and hardware clock:
 		ln -sf /usr/share/zoneinfo/Poland /etc/localtime    						#sets timezone. s -make soft link instead of hard one, f - remove existing destination files.
 		hwclock -w                          										#Without options prints hw time. w / --systohc - sets the Hardware Clock from the System Clock, and update the timestamps in /etc/adjtime.
@@ -172,28 +153,18 @@ Configuration:
 	grub-install --targret=i386-pc /dev/sdX    										#MBR - Installs grub to sdX. It will be installed on partition that has boot flag set.
 	pacman -S efibootmgr															#GPT - For some reason even when USB Media is running in UEFI mode I still have to install it.
 	[grub-install --target=x86_64-efi --efi-directory=esp --bootloader-id=GRUB]		#GPT - Installs grub to efi directory.
-	grub-mkconfig -o /boot/grub/grub.cfg       									 	#Creates basic grub config file based on /etc/default/grub.
-	
-
-Exit chroot, unmount deviecsand reboot:
+	grub-mkconfig -o /boot/grub/grub.cfg       									 	#Creates basic grub config file based on /etc/default/grub.}}}
+Exit chroot, unmount deviecsand reboot:{{{
 	exit											#exits chroot
 	umount -R /mnt									#unmounts devices
 	reboot		                                  	#Reboots computer.
 	
 	Note - if GRUB has to unlock partition where /boot mountpoint is present then add option "GRUB_ENABLE_CRYPTODISK=y" to file /etc/default/grub which is used by grub-install to generate the grub core.img, so make sure to install grub after modifying this option.
-
-Adding new user:
-	useradd [-m] [-G additional_groups] [-s login_shell] username		#m / --create-home creates the user home directory as /home/username. Use passwd user to set password.
-
- 
- 
- 
- blkid
- 
- 
- 
- 
-#I3_INSTAll
+}}}
+Adding new user:{{{
+	useradd [-m] [-G additional_groups] [-s login_shell] username		#m / --create-home creates the user home directory as /home/username. Use passwd user to set password.}}}
+blkid
+#I3_INSTAll{{{
 
 i3 installation:
 pacman -S xorg-server, xinit, xterm, i3gaps, ttf-dejavu
@@ -215,17 +186,14 @@ cp /etc/X11/xinit/xinitrc ~/.xinitrc
 Modify as above or as you like. When ~/.xinitrc is present it will be loaded instead of default one by xinit.
  
 xinit i3 - starts i3
-xinit or startx just runs xinitrc (startx also initializes xauth - to be verified). startx can be opened in vim - it is a shell script.
- 
- 
-To configure xterm:
+xinit or startx just runs xinitrc (startx also initializes xauth - to be verified). startx can be opened in vim - it is a shell script.}}}
+To configure xterm:{{{
 By default code in xinit script looks for ~/.Xresources, if it does not exist then it looks for/etc/X11/xinit/.Xresources.
  
 Simple .Xresources file:
 xterm*foreground:white
-xterm*background:grey19
- 
-#GIT
+xterm*background:grey19}}}
+#GIT{{{
 Install git:
 pacman -S git
  
@@ -253,19 +221,15 @@ git add readme.txt
 git commit -m "This is my first commit"
  
 git remote add origin URL               #to add remote server i.e.github. Later origin = URL
-git push -u origin master               #to push branch master to origin. TODO check what exactly -u flag means
- 
- 
-VirtualBox Guest Additions and resolution change:
+git push -u origin master               #to push branch master to origin. TODO check what exactly -u flag means}}}
+VirtualBox Guest Additions and resolution change:{{{
 pacman -S virtualbox-host-modules-arch
  
 In windows Vbox folder (Shift+ Right Click > PowerShell): VBoxManage setextradata "Arch Linux" "CustomVideoMode1" "1280x1024x24"
 And add kernel parameter you can manually add it to /boot/grub/grub.cfg
 Or append video=1280x1024 to GRUB_CMDLINE_LINUX_DEFAULT="splash " in /etc/default/grub and run grub-mkconfig -o /boot/grub/grub.cfg.
-To set GRUB Start screen resolution use SET
- 
- 
-#QUTEBROWSER
+To set GRUB Start screen resolution use SET}}}
+#QUTEBROWSER{{{
 pacman -S qutebrowser
 set J tab-prev
 set K tab-next
@@ -274,19 +238,14 @@ bind ,v spawn mpv {url} #to bind mpv to key
 
 For youtube videos:
 pacman -S mpv, youtube-dl
-command: spawn mpv <url>
-
- 
- 
-#NEOVIM
+command: spawn mpv <url>}}}
+#NEOVIM{{{
 set clipboard+=unnamedplus - sets PRIMARY ( " ) register to be default one for yank and paste operations
 pacman -S xsel - neovim does not support clipboard without clipboad tool (it worked without tool with gvim)
  
 set number      #to show line numbers
-set mouse=a     #to allow scrolling with mouse and selection automaticly triggers visual mode
- 
- 
-#CONSOLE
+set mouse=a     #to allow scrolling with mouse and selection automaticly triggers visual mode}}}
+#CONSOLE{{{
  
 Moving the Cursor
  
@@ -307,9 +266,8 @@ Bash includes some basic cut-and-paste features.
     Ctrl+W: Cut the word before the cursor, adding it to the clipboard.
     Ctrl+K: Cut the part of the line after the cursor, adding it to the clipboard.
     Ctrl+U: Cut the part of the line before the cursor, adding it to the clipboard.
-    Ctrl+Y: Paste the last thing you cut from the clipboard. The y here stands for “yank”.
- 
-I3 configs:
+    Ctrl+Y: Paste the last thing you cut from the clipboard. The y here stands for “yank”.}}}
+I3 configs:{{{
 
 ~/.config/i3/config
 
@@ -331,39 +289,30 @@ bindsym $right resize grow right 10px or 10ppt
 bindsym Shift+$left resize shrink left 10px or 10ppt
 bindsym Shift+$down resize shrink down 10px or 10ppt
 bindsym Shift+$up resize shrink up 10px or 10ppt
-bindsym Shift+$right resize shrink right 10px or 10ppt
- 
- 
- 
-#other things:
+bindsym Shift+$right resize shrink right 10px or 10ppt}}}
+#other things:{{{
 Instalacja interception tools i caps2esc wraz ze skrótem budowania paczek AUR
 poprawki w plikach init.vim i .vimrc, ewentualnie ustawienia coc.nvim dla ccls i instalacja ccls
 Instalacja easymotion i config
  
 Do zrobienia:
 Fuzzy finder-vim integration
-Nerd-Tree
-
-
-
-#SUDO
+Nerd-Tree}}}
+#SUDO{{{
 pacman -S sudo
 visudo 					#to edit /etc/sudoers
 uncomment "# %wheel ALL=(ALL) ALL" 	#to let group wheel use sudo (all permisions)
-usemod -aG wheel <username> 		#to user to group wheel. -a (append) used only together with -G (group list)
-
-#SU
+usemod -aG wheel <username> 		#to user to group wheel. -a (append) used only together with -G (group list)}}}
+#SU{{{
 Used to realy switch to another account. If run without argument it will switch to root.
-It seems that I'm logged as root only in terminal that I used this command in (I need to read how exactly it works).
-
-#AUR
+It seems that I'm logged as root only in terminal that I used this command in (I need to read how exactly it works).}}}
+#AUR{{{
 Easiest way to install package from AUR without downloading new package manager or enabling it in pacman (possible?) is:
 
 git clone https://aur.archlinux.org/package_name.git
 cd package_name
-makepkg -si 					#-s synces, resolves and installs dependancies (when package is from AUR dependancies have to be installed manually) -i install package if it is build succesfully
-
-#CAPS2ESC
+makepkg -si 					#-s synces, resolves and installs dependancies (when package is from AUR dependancies have to be installed manually) -i install package if it is build succesfully}}}
+#CAPS2ESC{{{
 I had to install 2 packages from AUR: interception-tools 0.1.1-6 and interception-caps2esc 0.1.3-2.
 
 I checked code of interception-caps2esc and it is realy simple program.
@@ -382,5 +331,4 @@ Contain for udevmon.yaml for caps2esc:
 
 Command to start udevmon with high priority (terminal can be closed later):
 sudo nice -n -20 udevmon -c /etc/udevmon.yaml >udevmon.log 2>udevmon.err
-I should add it to bashrc.
-
+I should add it to bashrc.}}}
