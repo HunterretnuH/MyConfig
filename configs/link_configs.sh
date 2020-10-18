@@ -9,7 +9,7 @@
     SWAY=1
     KITTY=1
     NEOVIM=1
-    NEOVIM_NOTES=1
+    NEOVIM_FT=1
     QUTEBROWSER=1
     ZATHURA=1
     RANGER=1
@@ -47,12 +47,12 @@ if [ $NEOVIM -eq 1 ]; then
     ln -sf $(pwd)/nvim/init.vim ~/.config/nvim/
 fi
 
-#NEOVIM_NOTES
-if [ $NEOVIM -eq 1 ]; then
-    mkdir -p ~/.config/nvim/ftdetect
-    ln -sf $(pwd)/nvim/ftdetect/notes.vim ~/.config/nvim/ftdetect/
-    mkdir -p ~/.config/nvim/after/ftplugin
-    ln -sf $(pwd)/nvim/after/ftplugin/notes.vim ~/.config/nvim/after/ftplugin
+#NEOVIM FTDETECT AND FTPLUGINS
+if [ $NEOVIM_FT -eq 1 ]; then
+    mkdir -p ~/.config/nvim/
+    ln -sf $(pwd)/nvim/ftdetect ~/.config/nvim/
+    mkdir -p ~/.config/nvim/after
+    ln -sf $(pwd)/nvim/after/ftplugin ~/.config/nvim/after/
 fi
 
 #QUTEBROWSER

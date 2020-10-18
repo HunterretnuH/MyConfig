@@ -1,8 +1,9 @@
 #export PAGER='less -s'
 
-PATH=$PATH:~/bin/
+PATH=$PATH:~/Scripts
 
 export XDG_CONFIG_HOME="$HOME/.config" EDITOR="nvim"
+export MOZ_ENABLE_WAYLAND=1
 
 #required for correct bindings to be loaded for fzf (even though it will be set later by my .inputrc)
 set -o vi
