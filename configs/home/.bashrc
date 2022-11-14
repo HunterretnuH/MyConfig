@@ -35,7 +35,7 @@ source /usr/share/fzf/completion.bash
 
 #PURELINE
 if [ "$TERM" != "linux" ]; then
-    source ~/git/3rd_party/pureline/pureline ~/.pureline.conf
+    source ~/Self_compiled/pureline/pureline ~/.pureline.conf
 fi
 
 #Starts sway only if logging in using tty1
