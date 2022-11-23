@@ -54,7 +54,7 @@ exec swayidle -w \
     timeout 300 'swaylock -f -c 000000' \
     timeout 600 'swaymsg "output * dpms off"' \
         resume 'swaymsg "output * dpms on"' \
-    before-sleep 'swaylock -f -c 000000'
+        before-sleep 'swaylock -f -c 000000'
 
 bindsym $mod+Ctrl+l exec 'swaylock -f -c 000000'
 
@@ -93,7 +93,7 @@ input "1:1:AT_Translated_Set_2_keyboard" {
     bindsym $mod+Ctrl+q kill
 
     # Start your launcher
-    bindsym $mod+d exec $menu
+    bindsym $mod+e exec $menu
 
     # Drag floating windows by holding down $mod and left mouse button.
     # Resize them with right mouse button + $mod.
@@ -103,24 +103,29 @@ input "1:1:AT_Translated_Set_2_keyboard" {
     floating_modifier $mod normal
 
     # Reload the configuration file
-    bindsym $mod+Shift+c reload
+    bindsym $mod+Ctrl+r reload
 
     # Exit sway (logs you out of your Wayland session)
     #bindsym $mod+Shift+e exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -b 'Yes, exit sway' 'swaymsg exit'
-    bindsym $mod+Shift+e exit
+    bindsym $mod+Ctrl+e exit
 #
 # Moving around:
 #
     # Move your focus around
-    bindsym $mod+$left focus left
-    bindsym $mod+$down focus down
     bindsym $mod+$up focus up
+    bindsym $mod+$down focus down
+    bindsym $mod+$left focus left
     bindsym $mod+$right focus right
     # Or use $mod+[up|down|left|right]
-    bindsym $mod+Left focus left
-    bindsym $mod+Down focus down
     bindsym $mod+Up focus up
+    bindsym $mod+Down focus down
+    bindsym $mod+Left focus left
     bindsym $mod+Right focus right
+    # Or use $mod+[W|S|A|D]
+    bindsym $mod+w focus up
+    bindsym $mod+s focus down
+    bindsym $mod+a focus left
+    bindsym $mod+d focus right
 
     # Move the focused window with the same, but add Shift
     bindsym $mod+Shift+$left move left
@@ -132,15 +137,20 @@ input "1:1:AT_Translated_Set_2_keyboard" {
     bindsym $mod+Shift+Down move down
     bindsym $mod+Shift+Up move up
     bindsym $mod+Shift+Right move right
+    # Or use $mod+[W|S|A|D]
+    bindsym $mod+Shift+w move up
+    bindsym $mod+Shift+s move down
+    bindsym $mod+Shift+a move left
+    bindsym $mod+Shift+d move right
 #
 # Workspaces:
 #
     #MOVE WORKSPACES
     mode "move_workspace" {
-        bindsym $up move workspace to output up
-        bindsym $down move workspace to output down
-        bindsym $left move workspace to output left
-        bindsym $right move workspace to output right
+        bindsym $up exec ~/Scripts/SwayMultiMonitor/move_workspace_to_output up
+        bindsym $down exec ~/Scripts/SwayMultiMonitor/move_workspace_to_output down
+        bindsym $left exec ~/Scripts/SwayMultiMonitor/move_workspace_to_output left
+        bindsym $right exec ~/Scripts/SwayMultiMonitor/move_workspace_to_output right
         
         bindsym Escape mode "default"
         bindsym Return mode "default"
@@ -148,30 +158,93 @@ input "1:1:AT_Translated_Set_2_keyboard" {
     }
     bindsym $mod+o mode "move_workspace"  
 
-    # Switch to workspace
-    bindsym $mod+1 workspace 1
-    bindsym $mod+2 workspace 2
-    bindsym $mod+3 workspace 3
-    bindsym $mod+4 workspace 4
-    bindsym $mod+5 workspace 5
-    bindsym $mod+6 workspace 6
-    bindsym $mod+7 workspace 7
-    bindsym $mod+8 workspace 8
-    bindsym $mod+9 workspace 9
-    bindsym $mod+0 workspace 10
-    # Move focused container to workspace
-    bindsym $mod+Shift+1 move container to workspace 1
-    bindsym $mod+Shift+2 move container to workspace 2
-    bindsym $mod+Shift+3 move container to workspace 3
-    bindsym $mod+Shift+4 move container to workspace 4
-    bindsym $mod+Shift+5 move container to workspace 5
-    bindsym $mod+Shift+6 move container to workspace 6
-    bindsym $mod+Shift+7 move container to workspace 7
-    bindsym $mod+Shift+8 move container to workspace 8
-    bindsym $mod+Shift+9 move container to workspace 9
-    bindsym $mod+Shift+0 move container to workspace 10
-    # Note: workspaces can have any name you want, not just numbers.
-    # We just use 1-10 as the default.
+   # Switch to workspace
+   bindsym $mod+1 exec ~/Scripts/SwayMultiMonitor/workspace 1
+   bindsym $mod+2 exec ~/Scripts/SwayMultiMonitor/workspace 2
+   bindsym $mod+3 exec ~/Scripts/SwayMultiMonitor/workspace 3
+   bindsym $mod+4 exec ~/Scripts/SwayMultiMonitor/workspace 4
+   bindsym $mod+5 exec ~/Scripts/SwayMultiMonitor/workspace 5
+   bindsym $mod+6 exec ~/Scripts/SwayMultiMonitor/workspace 6
+   bindsym $mod+7 exec ~/Scripts/SwayMultiMonitor/workspace 7
+   bindsym $mod+8 exec ~/Scripts/SwayMultiMonitor/workspace 8
+   bindsym $mod+9 exec ~/Scripts/SwayMultiMonitor/workspace 9
+   bindsym $mod+0 exec ~/Scripts/SwayMultiMonitor/workspace 10
+
+   bindsym Alt+Tab exec ~/Scripts/SwayMultiMonitor/workspace next
+   bindsym Alt+Shift+Tab exec ~/Scripts/SwayMultiMonitor/workspace previous
+
+   # Move focused container to workspace
+   bindsym $mod+Shift+1 exec ~/Scripts/SwayMultiMonitor/move_container_to_workspace 1
+   bindsym $mod+Shift+2 exec ~/Scripts/SwayMultiMonitor/move_container_to_workspace 2
+   bindsym $mod+Shift+3 exec ~/Scripts/SwayMultiMonitor/move_container_to_workspace 3
+   bindsym $mod+Shift+4 exec ~/Scripts/SwayMultiMonitor/move_container_to_workspace 4
+   bindsym $mod+Shift+5 exec ~/Scripts/SwayMultiMonitor/move_container_to_workspace 5
+   bindsym $mod+Shift+6 exec ~/Scripts/SwayMultiMonitor/move_container_to_workspace 6
+   bindsym $mod+Shift+7 exec ~/Scripts/SwayMultiMonitor/move_container_to_workspace 7
+   bindsym $mod+Shift+8 exec ~/Scripts/SwayMultiMonitor/move_container_to_workspace 8
+   bindsym $mod+Shift+9 exec ~/Scripts/SwayMultiMonitor/move_container_to_workspace 9
+   bindsym $mod+Shift+0 exec ~/Scripts/SwayMultiMonitor/move_container_to_workspace 10
+
+   bindsym $mod+Shift+F1 exec ~/Scripts/SwayMultiMonitor/move_to_output 1
+   bindsym $mod+Shift+F2 exec ~/Scripts/SwayMultiMonitor/move_to_output 2
+   bindsym $mod+Shift+F3 exec ~/Scripts/SwayMultiMonitor/move_to_output 3
+   bindsym $mod+Shift+F4 exec ~/Scripts/SwayMultiMonitor/move_to_output 4
+   bindsym $mod+Shift+F5 exec ~/Scripts/SwayMultiMonitor/move_to_output 5
+   bindsym $mod+Shift+F6 exec ~/Scripts/SwayMultiMonitor/move_to_output 6
+   bindsym $mod+Shift+F7 exec ~/Scripts/SwayMultiMonitor/move_to_output 7
+   bindsym $mod+Shift+F8 exec ~/Scripts/SwayMultiMonitor/move_to_output 8
+   bindsym $mod+Shift+F9 exec ~/Scripts/SwayMultiMonitor/move_to_output 9
+   bindsym $mod+Shift+F10 exec ~/Scripts/SwayMultiMonitor/move_to_output 10
+
+   bindsym $mod+F1 exec ~/Scripts/SwayMultiMonitor/focus_output 1
+   bindsym $mod+F2 exec ~/Scripts/SwayMultiMonitor/focus_output 2
+   bindsym $mod+F3 exec ~/Scripts/SwayMultiMonitor/focus_output 3
+   bindsym $mod+F4 exec ~/Scripts/SwayMultiMonitor/focus_output 4
+   bindsym $mod+F5 exec ~/Scripts/SwayMultiMonitor/focus_output 5
+   bindsym $mod+F6 exec ~/Scripts/SwayMultiMonitor/focus_output 6
+   bindsym $mod+F7 exec ~/Scripts/SwayMultiMonitor/focus_output 7
+   bindsym $mod+F8 exec ~/Scripts/SwayMultiMonitor/focus_output 8
+   bindsym $mod+F9 exec ~/Scripts/SwayMultiMonitor/focus_output 9
+   bindsym $mod+F10 exec ~/Scripts/SwayMultiMonitor/focus_output 10
+
+
+#   #MOVE WORKSPACES
+#   mode "move_workspace" {
+#       bindsym $up move workspace to output up
+#       bindsym $down move workspace to output down
+#       bindsym $left move workspace to output left
+#       bindsym $right move workspace to output right
+#       
+#       bindsym Escape mode "default"
+#       bindsym Return mode "default"
+#       bindsym $mod+o mode "default"
+#   }
+#   bindsym $mod+o mode "move_workspace"  
+
+#   # Switch to workspace
+#   bindsym $mod+1 workspace 1
+#   bindsym $mod+2 workspace 2
+#   bindsym $mod+3 workspace 3
+#   bindsym $mod+4 workspace 4
+#   bindsym $mod+5 workspace 5
+#   bindsym $mod+6 workspace 6
+#   bindsym $mod+7 workspace 7
+#   bindsym $mod+8 workspace 8
+#   bindsym $mod+9 workspace 9
+#   bindsym $mod+0 workspace 10
+#   # Move focused container to workspace
+#   bindsym $mod+Shift+1 move container to workspace 1
+#   bindsym $mod+Shift+2 move container to workspace 2
+#   bindsym $mod+Shift+3 move container to workspace 3
+#   bindsym $mod+Shift+4 move container to workspace 4
+#   bindsym $mod+Shift+5 move container to workspace 5
+#   bindsym $mod+Shift+6 move container to workspace 6
+#   bindsym $mod+Shift+7 move container to workspace 7
+#   bindsym $mod+Shift+8 move container to workspace 8
+#   bindsym $mod+Shift+9 move container to workspace 9
+#   bindsym $mod+Shift+0 move container to workspace 10
+#   # Note: workspaces can have any name you want, not just numbers.
+#   # We just use 1-10 as the default.
 #
 # Layout stuff:
 #
@@ -182,9 +255,9 @@ input "1:1:AT_Translated_Set_2_keyboard" {
     bindsym $mod+x splitv
 
     # Switch the current container between different layout styles
-    bindsym $mod+s layout stacking
-    bindsym $mod+w layout tabbed
-    bindsym $mod+e layout toggle split
+    bindsym $mod+z layout toggle split
+    bindsym $mod+Shift+c layout stacking
+    bindsym $mod+c layout tabbed
 
     # Make the current focus fullscreen
     bindsym $mod+f fullscreen
@@ -197,9 +270,9 @@ input "1:1:AT_Translated_Set_2_keyboard" {
 
     # Move focus to the parent container
     bindsym $mod+p focus parent
-    
+
     # Move focus to the parent container
-    bindsym $mod+c focus child 
+    bindsym $mod+Shift+P focus child 
 
 #
 # Scratchpad:
@@ -242,7 +315,7 @@ bindsym $mod+r mode "resize"
 
 #ADDITIONAL KEY BINDINGS
 bindsym $mod+m exec mpv $(wl-paste)
-bindsym Shift+$mod+s sticky toggle
+bindsym $mod+Shift+t sticky toggle
 
 #
 # Borders:
@@ -254,23 +327,53 @@ default_border pixel
 # Status Bar:
 #
 # Read `man 5 sway-bar` for more information about this section.
-bar {
-    position top
+exec waybar
+#bar {
+    #position top
 
     # When the status_command prints a new line to stdout, swaybar updates.
     # The default just shows the current date and time.
-    #status_command waybar
-    status_command while ~/sway_bar.sh ; do sleep 1; done
+    #status_command while ~/sway_bar.sh ; do sleep 1; done
     #
-    colors {
-        statusline #ffffff
-        background #323232
-        inactive_workspace #32323200 #32323200 #5c5c5c
-    }
-}
+    #colors {
+    #    statusline #ffffff
+    #    background #323232
+    #    inactive_workspace #32323200 #32323200 #5c5c5c
+    #}
+#}
 
 #MULTIPLE MONITOR CONFIG
-output 'Goldstar Company Ltd LG ULTRAWIDE 0x0000350D' pos 0 0
-output eDP-1 pos 320 1080
+#Szczecin
+#output 'Goldstar Company Ltd LG ULTRAWIDE 0x0000350D' pos 0 0
+#output eDP-1 pos 320 1080
+
+
+#Gorzów
+output eDP-1 pos 960 1080
+output DP-2 pos 0 0
+output HDMI-A-1 pos 1920 0
 
 include /etc/sway/config.d/*
+
+# Generated windows. These are probablby mostly for X11
+for_window [title="(?:Open|Save|Create) (?:File|Folder|As)"] floating enable;
+for_window [title="(?:Open|Save) (?:File|Folder|As)"] resize set 800 600
+for_window [window_role="pop-up"] floating enable
+for_window [window_role="bubble"] floating enable
+for_window [window_role="task_dialog"] floating enable
+for_window [window_role="Preferences"] floating enable
+for_window [window_type="dialog"] floating enable
+for_window [window_type="menu"] floating enable
+
+# audio
+bindsym XF86AudioPlay exec playerctl play-pause
+bindsym XF86AudioNext exec playerctl next
+bindsym XF86AudioPrev exec playerctl previous
+bindsym XF86AudioStop exec playerctl stop
+bindsym XF86AudioMute exec pamixer -t
+bindsym XF86AudioRaiseVolume exec pamixer -i 2
+bindsym XF86AudioLowerVolume exec pamixer -d 2
+
+# backlight
+bindsym XF86MonBrightnessUp exec light -A 5
+bindsym XF86MonBrightnessDown exec light -U 5

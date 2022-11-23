@@ -1,21 +1,35 @@
+
+" Whole 2 years of config modifications was lost ;(
+" TODO:
+" * właściwie to można przepisać to wszystko na LUA od razu, ale najpiew poukładam co już jest
+" * znaleźć uniwersalny fold i ustawić kategorie typu: general options, general keybindings, plugin-manager, per-plugin settings
+" * skonfigurować vim-wiki, albo od razu zmigrowac na inne wiki
+" * skonfigurować tree-sitter
+" * 
+" * 
+" * 
+
 set ts=4 sts=4 sw=4 et
 set autoindent smartindent
 set breakindent breakindentopt=min:20,shift:1,sbr showbreak=>\  
-
 set ignorecase smartcase
-
 set number
 set cursorline
-
 set clipboard=unnamedplus
-
 set hidden
+set termguicolors
 
-let mapleader = ","
+let mapleader = "\<Space>"
 
 "Regex to clear whitespaces at the EOL in whole buffer
 noremap <leader>w :%s/\s\+$//<CR>:noh<CR>
 
+noremap : q:i
+noremap q: :
+noremap / q/i
+noremap q/ / 
+noremap ? q?i
+noremap q? ? 
 
 "NETRW
 
@@ -28,16 +42,27 @@ let g:netrw_winsize = '30' " Smaller default window size
 " Specify a directory for plugins (:echo stdpath('data') and add folder /plugged)
 call plug#begin('~/.local/share/nvim/plugged') 
 
-Plug 'https://github.com/nanotech/jellybeans.vim.git'
-Plug 'https://github.com/itchyny/lightline.vim.git'
-Plug 'https://github.com/junegunn/fzf.vim.git'
-Plug 'https://github.com/easymotion/vim-easymotion.git'
-Plug 'https://github.com/natebosch/vim-lsc.git'
-Plug 'https://github.com/vimwiki/vimwiki' "TODO Coonsider lazy loading
+"Plug 'nanotech/jellybeans.vim'
+Plug 'itchyny/lightline.vim'
+Plug 'junegunn/fzf.vim'
+Plug 'easymotion/vim-easymotion'
+Plug 'vimwiki/vimwiki' "TODO Coonsider lazy loading
+Plug 'chrisbra/Recover.vim'
+Plug 'habamax/vim-godot'
+Plug 'jremmen/vim-ripgrep'
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+Plug 'preservim/tagbar'
+Plug 'tomasr/molokai'
+Plug 'rktjmp/lush.nvim'
+Plug 'metalelf0/jellybeans-nvim'
+Plug 'habamax/vim-godot'
+Plug 'jremmen/vim-ripgrep'
+Plug 'olimorris/onedarkpro.nvim'
 
 " On-demand loading
-" Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
+Plug 'preservim/nerdtree', { 'on':  'NERDTreeToggle' }
 Plug 'https://github.com/neoclide/coc.nvim', { 'branch': 'release', 'for': 'cs' }
+autocmd! User coc.nvim source ~/.config/nvim/coc-init.lua
 Plug 'https://github.com/OmniSharp/omnisharp-vim', { 'for': 'cs' }
 Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
 
@@ -57,8 +82,8 @@ set noshowmode
 let g:OmniSharp_selector_ui = 'fzf'    " Use fzf
 
 "FZF.vim
-nmap <leader>b :Buffers<CR>
-"TODO
+nnoremap <leader>fb :Buffers<CR>
+nnoremap <leader>ff :Files<CR>
 
 "VIM-EASYMOTION
 
@@ -67,59 +92,48 @@ nmap s <Plug>(easymotion-overwin-f2)
 
 "VIM WIKI
 let g:vimwiki_list = [{ 'path': '~/VimWiki/',
-                      \ 'syntax': 'markdown',
-                      \ 'ext': '.md'}]
+            \ 'syntax': 'markdown',
+            \ 'ext': '.md'}]
 
 nmap <leader>mp <Plug>MarkdownPreviewToggle
 
 "COC.NVIM
-let g:coc_global_extensions=[ 'coc-omnisharp' ] " Provides list of extansions for coc.nvim to be installed automatically
-nmap <leader>rn <Plug>(coc-rename)
+let g:coc_global_extensions=[ ] " Provides list of extansions for coc.nvim to be installed automatically
 
-"VIM-LSC
+lua << EOF
+require'nvim-treesitter.configs'.setup 
+{
+    -- A list of parser names, or "all"
+    ensure_installed = { "c", "lua", "c_sharp", "python", "bash" },
 
-" Used to make sure that error messages are not suppressed (neovim specific)
-set shortmess-=F 
+    -- Install parsers synchronously (only applied to `ensure_installed`)
+    sync_install = false,
 
-" All possible mappings TODO - change overrides
-let g:lsc_auto_map = {
-    \ 'GoToDefinition': '<C-]>',
-    \ 'GoToDefinitionSplit': ['<C-W>]', '<C-W><C-]>'],
-    \ 'FindReferences': 'gr',
-    \ 'NextReference': '<C-n>',
-    \ 'PreviousReference': '<C-p>',
-    \ 'FindImplementations': 'gI',
-    \ 'FindCodeActions': 'ga',
-    \ 'Rename': 'gR',
-    \ 'ShowHover': v:true,
-    \ 'DocumentSymbol': 'go',
-    \ 'WorkspaceSymbol': 'gS',
-    \ 'SignatureHelp': 'gm',
-    \ 'Completion': 'completefunc',
-    \}
+    -- Automatically install missing parsers when entering buffer
+    -- Recommendation: set to false if you don't have `tree-sitter` CLI installed locally
+    --auto_install = true,
 
-"Set ccls language server for cpp files
-let g:lsc_server_commands = {
-\ 'cpp': {
-\    'command': 'ccls',
-\    'suppress_stderr': v:true,
-\    'message_hooks': {
-\        'initialize': {
-\            'initializationOptions': {'cache': {'directory': '/tmp/ccls/cache'}},
-\            'rootUri': {m, p -> lsc#uri#documentUri(fnamemodify(findfile('compile_commands.json', expand('%:p') . ';'), ':p:h'))}
-\        },
-\    },
-\  },
-\ 'c': {
-\    'command': 'ccls',
-\    'suppress_stderr': v:true,
-\    'message_hooks': {
-\        'initialize': {
-\            'initializationOptions': {'cache': {'directory': '/tmp/ccls/cache'}},
-\            'rootUri': {m, p -> lsc#uri#documentUri(fnamemodify(findfile('compile_commands.json', expand('%:p') . ';'), ':p:h'))}
-\        },
-\    },
-\  },
-\
-\ 'python' : 'pyls' 
-\}
+    -- List of parsers to ignore installing (for "all")
+    --ignore_install = { "javascript" },
+
+    ---- If you need to change the installation directory of the parsers (see -> Advanced Setup)
+    -- parser_install_dir = "/some/path/to/store/parsers", -- Remember to run vim.opt.runtimepath:append("/some/path/to/store/parsers")!
+
+    highlight = 
+    {
+            -- `false` will disable the whole extension
+            enable = true,
+
+            -- NOTE: these are the names of the parsers and not the filetype. (for example if you want to
+            -- disable highlighting for the `tex` filetype, you need to include `latex` in this list as this is
+            -- the name of the parser)
+            -- list of language that will be disabled
+            --disable = { "c", "rust" },
+            -- Or use a function for more flexibility, e.g. to disable slow treesitter highlight for large files
+    },
+}
+EOF
+
+"TAGBAR
+noremap <leader>go :TagbarToggle<CR>
+noremap <leader>gf :NERDTreeToggle<CR>

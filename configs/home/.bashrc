@@ -1,13 +1,16 @@
+
+#BLE.SH start
+#[[ $- == *i* ]] && source "/usr/share/blesh/ble.sh" --rcfile "$HOME/.blerc"
+
 #export PAGER='less -s'
 
 PATH=$PATH:~/Scripts
 
 export XDG_CONFIG_HOME="$HOME/.config" EDITOR="nvim"
-export MOZ_ENABLE_WAYLAND=1
 
 #required for correct bindings to be loaded for fzf (even though it will be set later by my .inputrc)
 set -o vi
-
+bind "\eC-H":backward-kill-word
 #ALIASES
 alias v='nvim'
 alias ls='ls --color --group-directories-first'
@@ -33,10 +36,26 @@ source /usr/share/fzf/key-bindings.bash
 #enables completion like "cd ~/**<TAB>"
 source /usr/share/fzf/completion.bash 
 
+# VI-MODE CLIPBOARD
+# Macros to enable yanking, killing and putting to and from the system clipboard in vi-mode. Only supports yanking and killing the whole line.
+yank_line_to_clipboard () {
+  echo $READLINE_LINE | wl-copy
+}
+
+kill_line_to_clipboard () {
+  yank_line_to_clipboard
+  READLINE_LINE=""
+}
+
+bind -m vi-command -x '"YY": yank_line_to_clipboard'
+bind -m vi-command -x '"DD": kill_line_to_clipboard'
+
 #PURELINE
 if [ "$TERM" != "linux" ]; then
     source ~/Self_compiled/pureline/pureline ~/.pureline.conf
 fi
+
+#[[ ${BLE_VERSION-} ]] && ble-attach
 
 #Starts sway only if logging in using tty1
 if [ "$(tty)" = "/dev/tty1" ]; then
