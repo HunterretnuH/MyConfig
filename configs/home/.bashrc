@@ -1,10 +1,8 @@
-
-#BLE.SH start
-#[[ $- == *i* ]] && source "/usr/share/blesh/ble.sh" --rcfile "$HOME/.blerc"
+# vim: foldmethod=marker
 
 #export PAGER='less -s'
-
 PATH=$PATH:~/Scripts
+# GLOBAL VARIABLES
 
 export XDG_CONFIG_HOME="$HOME/.config" EDITOR="nvim"
 
@@ -21,6 +19,8 @@ alias r='ranger'
 alias k='kitty --detach'
 alias kp="sudo kill \$(ps -A|fzf|awk '{print \$1}')"
 alias kkp="sudo kill -s SIGKILL \$(ps -A|fzf|awk '{print \$1}')"
+alias vrg="nvim --listen godothost ."
+alias vrgn="cd ~/Documents/godot4-projects/Top-Down-2D-Game-Tutorial/;nvim --listen /tmp/godothost ."
 
 #TEMPORARY ALIASES
 alias vpn_zut="sudo openvpn ~/.config/vpn/wi_zut_vpn.ovpn"

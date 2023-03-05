@@ -1,4 +1,4 @@
-
+" vim: foldmethod=marker
 " Whole 2 years of config modifications was lost ;(
 " TODO:
 " * właściwie to można przepisać to wszystko na LUA od razu, ale najpiew poukładam co już jest
@@ -9,6 +9,7 @@
 " * 
 " * 
 
+" {{{ BASIC SETTINGS
 set ts=4 sts=4 sw=4 et
 set autoindent smartindent
 set breakindent breakindentopt=min:20,shift:1,sbr showbreak=>\  
@@ -18,6 +19,7 @@ set cursorline
 set clipboard=unnamedplus
 set hidden
 set termguicolors
+"}}}
 
 let mapleader = "\<Space>"
 
@@ -43,7 +45,7 @@ let g:netrw_winsize = '30' " Smaller default window size
 call plug#begin('~/.local/share/nvim/plugged') 
 
 "Plug 'nanotech/jellybeans.vim'
-Plug 'itchyny/lightline.vim'
+"Plug 'itchyny/lightline.vim'
 Plug 'junegunn/fzf.vim'
 Plug 'easymotion/vim-easymotion'
 Plug 'vimwiki/vimwiki' "TODO Coonsider lazy loading
@@ -55,15 +57,19 @@ Plug 'preservim/tagbar'
 Plug 'tomasr/molokai'
 Plug 'rktjmp/lush.nvim'
 Plug 'metalelf0/jellybeans-nvim'
-Plug 'habamax/vim-godot'
-Plug 'jremmen/vim-ripgrep'
 Plug 'olimorris/onedarkpro.nvim'
+Plug 'rebelot/kanagawa.nvim'
+Plug 'nvim-treesitter/playground'
+Plug 'npxbr/gruvbox.nvim'
+"Plug 'ryanoasis/vim-devicons'
+Plug  'nvim-tree/nvim-web-devicons'
+Plug 'nvim-lualine/lualine.nvim'
 
 " On-demand loading
 Plug 'preservim/nerdtree', { 'on':  'NERDTreeToggle' }
-Plug 'https://github.com/neoclide/coc.nvim', { 'branch': 'release', 'for': 'cs' }
-autocmd! User coc.nvim source ~/.config/nvim/coc-init.lua
-Plug 'https://github.com/OmniSharp/omnisharp-vim', { 'for': 'cs' }
+"Plug 'https://github.com/neoclide/coc.nvim', { 'branch': 'release', 'for': ['cs', 'c'] }
+"autocmd! User coc.nvim source ~/.config/nvim/coc-init.lua
+Plug 'OmniSharp/omnisharp-vim', { 'for': 'cs' }
 Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
 
 " Initialize plugin system
@@ -71,7 +77,7 @@ call plug#end()
 
 "JELLYBEANS.VIM
 
-colorscheme jellybeans
+"colorscheme jellybeans-nvim
 
 "LIGHTLINE.VIM
 
@@ -80,6 +86,9 @@ set noshowmode
 
 "OMNISHARP
 let g:OmniSharp_selector_ui = 'fzf'    " Use fzf
+nmap K :OmniSharpDocumentation<CR>
+nmap <C-k> :OmniSharpGotoDefinition<CR>
+
 
 "FZF.vim
 nnoremap <leader>fb :Buffers<CR>
@@ -91,7 +100,7 @@ let g:EasyMotion_do_mapping = 0 " Disable default mappings
 nmap s <Plug>(easymotion-overwin-f2)
 
 "VIM WIKI
-let g:vimwiki_list = [{ 'path': '~/VimWiki/',
+let g:vimwiki_list = [{ 'path': '~/Documents/Wiki-Notatki/',
             \ 'syntax': 'markdown',
             \ 'ext': '.md'}]
 
@@ -137,3 +146,37 @@ EOF
 "TAGBAR
 noremap <leader>go :TagbarToggle<CR>
 noremap <leader>gf :NERDTreeToggle<CR>
+
+
+lua << EOF
+require("onedarkpro").setup({
+dark_theme = "onedark_vivid", -- The default dark theme
+light_theme = "onelight", -- The default light theme
+colors = {
+    onedark = {
+        bg = "#121212" -- grey
+        },
+    onedark_vivid = {
+        bg = "#121212" -- grey
+        },
+    onelight = {
+        --bg = "#121212" -- grey
+        }
+    },
+    styles = {
+        conditionals = "bold",
+        repeats = "bold",
+        functions = "bold",
+    },
+    options = {
+        cursorline = true,
+    }
+    })
+vim.cmd("colorscheme onedarkpro")
+EOF
+
+lua << EOF
+require('lualine').setup {
+ options = { theme  = 'onedarkpro' },
+}
+EOF
