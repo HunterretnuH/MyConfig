@@ -1,7 +1,7 @@
 # vim: foldmethod=marker
 
 #export PAGER='less -s'
-PATH=$PATH:~/Scripts
+PATH=$PATH:~/Scripts:/home/$USER/.local/bin
 # GLOBAL VARIABLES
 
 export XDG_CONFIG_HOME="$HOME/.config" EDITOR="nvim"
@@ -15,12 +15,15 @@ alias ls='ls --color --group-directories-first'
 alias l='ls -lh'
 alias ll='l -a'
 alias e='exit'
-alias r='ranger'
+alias r='. ranger'
 alias k='kitty --detach'
 alias kp="sudo kill \$(ps -A|fzf|awk '{print \$1}')"
 alias kkp="sudo kill -s SIGKILL \$(ps -A|fzf|awk '{print \$1}')"
 alias vrg="nvim --listen godothost ."
 alias vrgn="cd ~/Documents/godot4-projects/Top-Down-2D-Game-Tutorial/;nvim --listen /tmp/godothost ."
+alias musb="udisksctl mount -b \$(echo /dev/\$(lsblk --list|grep -v -e sda -e croot -e cswap -e chome|fzf|cut -d ' ' -f 1))"
+alias gusb="cd /run/media/hunter/"
+
 
 #TEMPORARY ALIASES
 alias vpn_zut="sudo openvpn ~/.config/vpn/wi_zut_vpn.ovpn"
