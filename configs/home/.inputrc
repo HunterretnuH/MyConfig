@@ -18,3 +18,4 @@ $if mode=vi
     #set keymap vi-command
     "\C-l": clear-screen
 $endif
+"\C-e": alias-expand-line

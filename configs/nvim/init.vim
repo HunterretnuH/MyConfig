@@ -353,8 +353,10 @@ lua << EOF
     vim.g.wiki_link_extension = '.md' -- let g:wiki_link_extension = '.md'
     vim.g.wiki_link_target_type= 'md' -- let g:wiki_link_target_type= 'md'
 
-    vim.api.nvim_create_autocmd( 
-        { 'FileType' }, 
+    vim.g.markdown_fenced_languages = { 'python', 'c' } -- It doesn't use treesitter TODO: Search for better solution.
+
+    vim.api.nvim_create_autocmd(
+        { 'FileType' },
         {
             pattern = { 'markdown' }, 
             callback = function() 
@@ -378,7 +380,7 @@ EOF
 " DEVELOPMENT RELATED
 "--{{{ OUTLINER:                 TAGBAR (C-tags based outliner): <l>go = TagbarToggle
 lua << EOF
-    vim.keymap.set({ 'n', 'v', 'o' }, '<leader>go',  ':TagbarToggle<CR>', { remap = false }) -- noremap <leader>go :TagbarToggle<CR>
+    vim.keymap.set({ 'n', 'v', 'o' }, 'so',  ':TagbarToggle<CR>', { remap = false }) -- noremap <leader>go :TagbarToggle<CR>
 --}}} OUTLINER
 --{{{ C# LSP-alternative:       OMNISHARP
     vim.g.OmniSharp_selector_ui = "fzf" -- let g:OmniSharp_selector_ui = 'fzf'
