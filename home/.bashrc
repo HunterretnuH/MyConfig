@@ -1,10 +1,17 @@
 # vim: foldmethod=marker
 
 #export PAGER='less -s'
-PATH=$PATH:~/Scripts:/home/$USER/.local/bin
+PATH=/home/$USER/.local/bin:/home/$USER/Scripts:$PATH:/home/$USER/MyPrograms/go/bin
 # GLOBAL VARIABLES
 
-export XDG_CONFIG_HOME="$HOME/.config" EDITOR="nvim"
+# TODO: Verify if export is required
+export XDG_CONFIG_HOME="$HOME/.config" 
+export EDITOR="nvim"
+export GOPATH="/home/$USER/MyPrograms/go"
+export MOZ_ENABLE_WAYLAND=1
+export MESA_LOADER_DRIVER_OVERRIDE=radeonsi                                         # Test if impacts firefox launch
+export __EGL_VENDOR_LIBRARY_FILENAMES=/usr/share/glvnd/egl_vendor.d/50_mesa.json    # If not then remove
+export AMD_DEBUG=nodcc
 
 #required for correct bindings to be loaded for fzf (even though it will be set later by my .inputrc)
 set -o vi
@@ -16,6 +23,7 @@ alias l='ls -lh'
 alias ll='l -a'
 alias e='exit'
 alias r='. ranger'
+alias cdd="cd ~/Desktop"
 alias k='kitty --detach'
 alias kp="sudo kill \$(ps -A|fzf|awk '{print \$1}')"
 alias kkp="sudo kill -s SIGKILL \$(ps -A|fzf|awk '{print \$1}')"
@@ -55,12 +63,14 @@ bind -m vi-command -x '"DD": kill_line_to_clipboard'
 
 #PURELINE
 if [ "$TERM" != "linux" ]; then
-    source ~/Self_compiled/pureline/pureline ~/.pureline.conf
+    source ~/MyPrograms/Git/pureline/pureline ~/.pureline.conf
 fi
 
 #[[ ${BLE_VERSION-} ]] && ble-attach
 
 #Starts sway only if logging in using tty1
 if [ "$(tty)" = "/dev/tty1" ]; then
-	exec sway
+    WLR_DRM_DEVICES=/dev/dri/card0 sway --unsupported-gpu
+elif [ "$(tty)" = "/dev/tty2" ]; then
+	exec Hyprland
 fi

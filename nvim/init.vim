@@ -1,11 +1,6 @@
 " vim: foldmethod=marker textwidth=120 colorcolumn=121
 
 " GENERAL CONFIG
-"--{{{ PLUGIN MANAGER - packer.nvim
-lua << EOF
-    require('plugins') -- ~/.config/nvim/lua/plugins.lua
-EOF
-"--}}} PLUGIN MANAGER
 "--{{{ OPTIONS
 lua << EOF
     vim.o.tabstop = 4                               -- set ts=4
@@ -62,6 +57,201 @@ EOF
 "--}}} ADDITIONAL KEYMAPPINGS
 
 " PLUGINS:
+"--{{{ DUPLICATE-SETTINGS        global variables for plugins necessary to be set before loading plugins
+lua << EOF
+    --NVIM-TREE
+    vim.g.loaded_netrw = 1 -- let g:loaded_netrw = 1
+    vim.g.loaded_netrwPlugin = 1 -- let g:loaded_netrwPlugin = 1
+EOF
+    "RNVIMR
+    "{{{ Other options (default):
+        " Make Ranger replace Netrw and be the file explorer
+        let g:rnvimr_enable_ex = 1
+
+        " Make Ranger to be hidden after picking a file
+        let g:rnvimr_enable_picker = 1
+
+        " Replace `$EDITOR` candidate with this command to open the selected file
+        let g:rnvimr_edit_cmd = 'drop'
+
+        " Disable a border for floating window
+        let g:rnvimr_draw_border = 0
+
+        " Hide the files included in gitignore
+        let g:rnvimr_hide_gitignore = 1
+
+        " Change the border's color
+        let g:rnvimr_border_attr = {'fg': 14, 'bg': -1}
+
+        " Make Neovim wipe the buffers corresponding to the files deleted by Ranger
+        let g:rnvimr_enable_bw = 1
+
+        " Add a shadow window, value is equal to 100 will disable shadow
+        let g:rnvimr_shadow_winblend = 70
+
+        " Draw border with both
+        let g:rnvimr_ranger_cmd = ['ranger', '--cmd=set draw_borders outline']
+
+        " Link CursorLine into RnvimrNormal highlight in the Floating window
+        highlight link RnvimrNormal CursorLine
+
+        " Resize floating window by special preset layouts
+        "tnoremap <silent> <leader>es <C-\><C-n>:RnvimrResize 1,8,9,11,5<CR>
+
+        " Resize floating window by single preset layout
+        " tnoremap <silent> <leader>eS <C-\><C-n>:RnvimrResize 6<CR>
+
+        " Map Rnvimr action
+        let g:rnvimr_action = {
+                    \ '<C-t>': 'NvimEdit tabedit',
+                    \ '<C-x>': 'NvimEdit split',
+                    \ '<C-v>': 'NvimEdit vsplit',
+                    \ 'gw': 'JumpNvimCwd',
+                    \ 'yw': 'EmitRangerCwd'
+                    \ }
+
+        " Add views for Ranger to adapt the size of floating window
+        let g:rnvimr_ranger_views = [
+                    \ {'minwidth': 90, 'ratio': []},
+                    \ {'minwidth': 50, 'maxwidth': 89, 'ratio': [1,1]},
+                    \ {'maxwidth': 49, 'ratio': [1]}
+                    \ ]
+
+        " Customize the initial layout
+        let g:rnvimr_layout = {
+                    \ 'relative': 'editor',
+                    \ 'width': float2nr(round(0.7 * &columns)),
+                    \ 'height': float2nr(round(0.7 * &lines)),
+                    \ 'col': float2nr(round(0.15 * &columns)),
+                    \ 'row': float2nr(round(0.15 * &lines)),
+                    \ 'style': 'minimal'
+                    \ }
+
+        " Customize multiple preset layouts
+        " '{}' represents the initial layout
+        let g:rnvimr_presets = [
+                    \ {'width': 0.600, 'height': 0.600},
+                    \ {},
+                    \ {'width': 0.800, 'height': 0.800},
+                    \ {'width': 0.950, 'height': 0.950},
+                    \ {'width': 0.500, 'height': 0.500, 'col': 0, 'row': 0},
+                    \ {'width': 0.500, 'height': 0.500, 'col': 0, 'row': 0.5},
+                    \ {'width': 0.500, 'height': 0.500, 'col': 0.5, 'row': 0},
+                    \ {'width': 0.500, 'height': 0.500, 'col': 0.5, 'row': 0.5},
+                    \ {'width': 0.500, 'height': 1.000, 'col': 0, 'row': 0},
+                    \ {'width': 0.500, 'height': 1.000, 'col': 0.5, 'row': 0},
+                    \ {'width': 1.000, 'height': 0.500, 'col': 0, 'row': 0},
+                    \ {'width': 1.000, 'height': 0.500, 'col': 0, 'row': 0.5}
+                    \ ]
+
+        " Fullscreen for initial layout
+        " let g:rnvimr_layout = {
+        "            \ 'relative': 'editor',
+        "            \ 'width': &columns,
+        "            \ 'height': &lines - 2,
+        "            \ 'col': 0,
+        "            \ 'row': 0,
+        "            \ 'style': 'minimal'
+        "            \ }
+        "
+        " Only use initial preset layout
+        " let g:rnvimr_presets = [{}]
+    "}}}
+"--}}} DUPLICATE-SETTINGS
+"--{{{ PLUGIN MANAGER - lazy.nvim
+lua << EOF
+    --{{{ Install lazy.nvim if not installed (bootstrap)
+    local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+    if not vim.loop.fs_stat(lazypath) then
+        vim.fn.system({
+            "git",
+            "clone",
+            "--filter=blob:none",
+            "https://github.com/folke/lazy.nvim.git",
+            "--branch=stable", -- latest stable release
+            lazypath,
+        })
+    end
+    vim.opt.rtp:prepend(lazypath)
+    --}}}
+    --{{{ List of plugins
+    require("lazy").setup({
+         --Generaly usefull plugins
+        { "nvim-treesitter/nvim-treesitter",                    -- syntax highlighting
+             build = ":TSUpdate" }, 
+        { "metalelf0/jellybeans-nvim" },                        -- colorscheme
+        { "olimorris/onedarkpro.nvim" },                        -- colorscheme
+        { "nvim-lualine/lualine.nvim",                          -- statusline
+             dependencies = { "nvim-tree/nvim-web-devicons" } },
+        { "nvim-tree/nvim-tree.lua",                            -- simple file manager with tree view
+             dependencies = { "nvim-tree/nvim-web-devicons" } },
+        { "kevinhwang91/rnvimr" },                              -- ranger file manager inside vim TODO: Add deps
+        { "jremmen/vim-ripgrep" },                              -- ripgrep and vim integration TODO: Add deps - ripgrep
+        { "junegunn/fzf.vim",                                   -- Fuzzy Finder FZF and vim integration
+             dependencies = { "junegunn/fzf", 
+                               build = ":call fzf#Install()" } },
+        { "chrisbra/Recover.vim" },                             -- Addc [C]ompare option to recovery menu
+        { "easymotion/vim-easymotion" },                        -- Move to any place on screen
+        { "lervag/wiki.vim" },                                  -- personal wiki
+        { "preservim/tagbar" },                                 -- outliner based on c tags TODO: Add C-tags dep
+        { "folke/which-key.nvim",
+            event = "VeryLazy",
+            init = function()
+                vim.o.timeout = true
+                vim.o.timeoutlen = 300
+            end,
+            opts = {
+            -- your configuration comes here or leave it empty to use the default settings
+            } },
+
+         --Development-related plugins
+        { "habamax/vim-godot" },                                -- godot and vim integration TODO: Add deps?
+        { "andymass/vim-matchup", 
+            event = "VimEnter" },
+        { "img-paste-devs/img-paste.vim" },                     -- paste image file links in markdown (or custom) format
+        --{ "neoclide/coc.nvim",                                  -- VSCode compatibility layer and LSP
+        --  branch = "release" }, -- TODO: Fix lazy load and add coc-fzf and keybindings, fix :w<CR> permanently
+            --ft = { "sh", "bash", "c", "cpp", "cmake", "html", "vim", "json", "php", "python" }, 
+            --config = "vim.cmd[[source ~/.config/nvim/coc-init.lua]]" },
+        { "antoinemadec/coc-fzf",                               -- Requires pynvim to be installed (pip3 install pynvim)
+            branch = "release" },         
+        { "OmniSharp/omnisharp-vim",                            -- LSP and more, works better for C# then coc.nvim
+            ft = {"cs"} },             
+        { "vim-scripts/AnsiEsc.vim" },
+        { "lukas-reineke/indent-blankline.nvim" },               -- TODO: check and customize
+        {
+            'glacambre/firenvim',
+
+            -- Lazy load firenvim
+            -- Explanation: https://github.com/folke/lazy.nvim/discussions/463#discussioncomment-4819297
+            cond = not not vim.g.started_by_firenvim,
+            build = function()
+                require("lazy").load({ plugins = "firenvim", wait = true })
+                vim.fn["firenvim#install"](0)
+            end
+        },
+        'hrsh7th/cmp-nvim-lsp',
+        'hrsh7th/nvim-cmp',
+        'arakkkkk/kanban.nvim',
+        'xarthurx/taskwarrior.vim'
+        --use "nvim-treesitter/playground"
+        --use { "glacambre/firenvim", run = function() vim.fn["firenvim#install"](0) end }
+        --use {"glepnir/galaxyline.nvim", branch = "main", config = function() require"statusline" end, requires = {"kyazdani42/nvim-web-devicons"}}
+        -- TODO:
+        -- Plug "tpope/vim-fugitive" -- Wasn"t there some better replacement?
+        -- Plug "mfussenegger/nvim-dap"
+        -- Plug "rcarriga/nvim-dap-ui"
+        -- Plug "theHamsta/nvim-dap-virtual-text"
+        -- Plug "nvim-lua/plenary.nvim"
+        -- Plug "sindrets/diffview.nvim"
+        -- use "nvim-treesitter/nvim-treesitter-context"
+        -- use "numToStr/Comment.nvim"
+        -- use "junegunn/vim-peekaboo"
+        -- use "ggandor/leap.nvim"
+    })
+    --}}}
+EOF
+"--}}} PLUGIN MANAGER
 "--{{{ TREE FILE EXPLORER:       NVIM-TREE: <l>t = NvimTreeToggle, <l>T = NvimTreeFindFile
 lua << EOF
     -- disable netrw at the very start of your init.lua (strongly advised)
@@ -203,7 +393,7 @@ lua << EOF
     require'nvim-treesitter.configs'.setup
     {
         -- A list of parser names, or "all"
-        ensure_installed = { "c", "vim", "lua", "c_sharp", "python", "bash" },
+        ensure_installed = { "c", "vim", "lua", "c_sharp", "python", "bash", "commonlisp"},
 
         -- Install parsers synchronously (only applied to `ensure_installed`)
         sync_install = false,
@@ -245,99 +435,6 @@ lua << EOF
     -- Resize floating window by all preset layouts
     vim.keymap.set({ 't' }, '<leader>re', '<C-\\><C-n>:RnvimrResize<CR>', { remap = false, silent = true }) -- tnoremap <silent> <leader>re <C-\><C-n>:RnvimrResize<CR>
 EOF
-    "{{{ Other options (default):
-        " Make Ranger replace Netrw and be the file explorer
-        let g:rnvimr_enable_ex = 1
-
-        " Make Ranger to be hidden after picking a file
-        let g:rnvimr_enable_picker = 1
-
-        " Replace `$EDITOR` candidate with this command to open the selected file
-        let g:rnvimr_edit_cmd = 'drop'
-
-        " Disable a border for floating window
-        let g:rnvimr_draw_border = 0
-
-        " Hide the files included in gitignore
-        let g:rnvimr_hide_gitignore = 1
-
-        " Change the border's color
-        let g:rnvimr_border_attr = {'fg': 14, 'bg': -1}
-
-        " Make Neovim wipe the buffers corresponding to the files deleted by Ranger
-        let g:rnvimr_enable_bw = 1
-
-        " Add a shadow window, value is equal to 100 will disable shadow
-        let g:rnvimr_shadow_winblend = 70
-
-        " Draw border with both
-        let g:rnvimr_ranger_cmd = ['ranger', '--cmd=set draw_borders outline']
-
-        " Link CursorLine into RnvimrNormal highlight in the Floating window
-        highlight link RnvimrNormal CursorLine
-
-        " Resize floating window by special preset layouts
-        "tnoremap <silent> <leader>es <C-\><C-n>:RnvimrResize 1,8,9,11,5<CR>
-
-        " Resize floating window by single preset layout
-        " tnoremap <silent> <leader>eS <C-\><C-n>:RnvimrResize 6<CR>
-
-        " Map Rnvimr action
-        let g:rnvimr_action = {
-                    \ '<C-t>': 'NvimEdit tabedit',
-                    \ '<C-x>': 'NvimEdit split',
-                    \ '<C-v>': 'NvimEdit vsplit',
-                    \ 'gw': 'JumpNvimCwd',
-                    \ 'yw': 'EmitRangerCwd'
-                    \ }
-
-        " Add views for Ranger to adapt the size of floating window
-        let g:rnvimr_ranger_views = [
-                    \ {'minwidth': 90, 'ratio': []},
-                    \ {'minwidth': 50, 'maxwidth': 89, 'ratio': [1,1]},
-                    \ {'maxwidth': 49, 'ratio': [1]}
-                    \ ]
-
-        " Customize the initial layout
-        let g:rnvimr_layout = {
-                    \ 'relative': 'editor',
-                    \ 'width': float2nr(round(0.7 * &columns)),
-                    \ 'height': float2nr(round(0.7 * &lines)),
-                    \ 'col': float2nr(round(0.15 * &columns)),
-                    \ 'row': float2nr(round(0.15 * &lines)),
-                    \ 'style': 'minimal'
-                    \ }
-
-        " Customize multiple preset layouts
-        " '{}' represents the initial layout
-        let g:rnvimr_presets = [
-                    \ {'width': 0.600, 'height': 0.600},
-                    \ {},
-                    \ {'width': 0.800, 'height': 0.800},
-                    \ {'width': 0.950, 'height': 0.950},
-                    \ {'width': 0.500, 'height': 0.500, 'col': 0, 'row': 0},
-                    \ {'width': 0.500, 'height': 0.500, 'col': 0, 'row': 0.5},
-                    \ {'width': 0.500, 'height': 0.500, 'col': 0.5, 'row': 0},
-                    \ {'width': 0.500, 'height': 0.500, 'col': 0.5, 'row': 0.5},
-                    \ {'width': 0.500, 'height': 1.000, 'col': 0, 'row': 0},
-                    \ {'width': 0.500, 'height': 1.000, 'col': 0.5, 'row': 0},
-                    \ {'width': 1.000, 'height': 0.500, 'col': 0, 'row': 0},
-                    \ {'width': 1.000, 'height': 0.500, 'col': 0, 'row': 0.5}
-                    \ ]
-
-        " Fullscreen for initial layout
-        " let g:rnvimr_layout = {
-        "            \ 'relative': 'editor',
-        "            \ 'width': &columns,
-        "            \ 'height': &lines - 2,
-        "            \ 'col': 0,
-        "            \ 'row': 0,
-        "            \ 'style': 'minimal'
-        "            \ }
-        "
-        " Only use initial preset layout
-        " let g:rnvimr_presets = [{}]
-    "}}}
 lua << EOF
 --}}} FILE EXPLORER
 --{{{ ADDITIONAL MOTION:        VIM-EASYMOTION: <l>m = MoveToText
@@ -348,12 +445,13 @@ lua << EOF
 --{{{ PERSONAL WIKI:            WIKI.VIM: <l>ww = OpenWiki
     -- Remap of wiki opening which also sets CWD to wiki root
     vim.keymap.set('n', '<leader>ww', '<Plug>(wiki-index):cd%:p:h<CR>', { silent = true }) -- nmap <silent> <leader>ww <Plug>(wiki-index):cd%:p:h<CR>
+    -- TODO Add MyWiki directory creation command
     vim.g.wiki_root = '~/Documents/MyWiki/' -- let g:wiki_root = '~/Documents/MyWiki/'
     vim.g.wiki_filetypes = {'md'} -- let g:wiki_filetypes = ['md']
     vim.g.wiki_link_extension = '.md' -- let g:wiki_link_extension = '.md'
     vim.g.wiki_link_target_type= 'md' -- let g:wiki_link_target_type= 'md'
 
-    vim.g.markdown_fenced_languages = { 'python', 'c' } -- It doesn't use treesitter TODO: Search for better solution.
+    vim.g.markdown_fenced_languages = { 'python', 'c', 'bash', 'go', 'vim', 'lua', 'html' } -- It doesn't use treesitter TODO: Search for better solution.
 
     vim.api.nvim_create_autocmd(
         { 'FileType' },
@@ -374,11 +472,101 @@ lua << EOF
             callback = function() vim.keymap.set('n', '<leader>p', ':call mdip#markdownclipboardimage()<cr>', { silent = true }) end
         }) -- autocmd filetype markdown nmap <buffer><silent> <leader>p :call mdip#markdownclipboardimage()<cr>
     vim.g.mdip_imgdir_absolute = '~/Documents/MyWiki/img' -- let g:mdip_imgdir_absolute = '~/Documents/MyWiki/img'
+--}}} IMG-PASTE
+--{{{ EDIT BROWSER TEXTBOXES:   FIRENVIM
+    vim.api.nvim_create_autocmd({'UIEnter'}, {
+        callback = function(event)
+            local client = vim.api.nvim_get_chan_info(vim.v.event.chan).client
+            if client ~= nil and client.name == "Firenvim" then
+                --vim.o.laststatus = 0
+                vim.cmd('startinsert')
+                vim.keymap.set({ 'n', 'v', 'o' }, '<CR>',  ':wq<CR>', { remap = false }) -- noremap : q:i
+            end
+        end
+    })
+--}}} EDIT BROWSER TEXTBOXES
+--{{{ NVIM-CMP
+  -- Set up nvim-cmp.
+  local cmp = require'cmp'
+
+  cmp.setup({
+    snippet = {
+      -- REQUIRED - you must specify a snippet engine
+      expand = function(args)
+        vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
+        -- require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
+        -- require('snippy').expand_snippet(args.body) -- For `snippy` users.
+        -- vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
+      end,
+    },
+    window = {
+      -- completion = cmp.config.window.bordered(),
+      -- documentation = cmp.config.window.bordered(),
+    },
+    mapping = cmp.mapping.preset.insert({
+      ['<C-b>'] = cmp.mapping.scroll_docs(-4),
+      ['<C-f>'] = cmp.mapping.scroll_docs(4),
+      ['<C-Space>'] = cmp.mapping.complete(),
+      ['<C-e>'] = cmp.mapping.abort(),
+      ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+    }),
+    sources = cmp.config.sources({
+      { name = 'nvim_lsp' },
+      --{ name = 'vsnip' }, -- For vsnip users.
+      -- { name = 'luasnip' }, -- For luasnip users.
+      -- { name = 'ultisnips' }, -- For ultisnips users.
+      -- { name = 'snippy' }, -- For snippy users.
+    }, {
+      { name = 'buffer' },
+    })
+  })
+
+  -- Set configuration for specific filetype.
+  cmp.setup.filetype('gitcommit', {
+    sources = cmp.config.sources({
+      { name = 'git' }, -- You can specify the `git` source if [you were installed it](https://github.com/petertriho/cmp-git).
+    }, {
+      { name = 'buffer' },
+    })
+  })
+
+  -- Use buffer source for `/` and `?` (if you enabled `native_menu`, this won't work anymore).
+  cmp.setup.cmdline({ '/', '?' }, {
+    mapping = cmp.mapping.preset.cmdline(),
+    sources = {
+      { name = 'buffer' }
+    }
+  })
+
+  -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
+  cmp.setup.cmdline(':', {
+    mapping = cmp.mapping.preset.cmdline(),
+    sources = cmp.config.sources({
+      { name = 'path' }
+    }, {
+      { name = 'cmdline' }
+    })
+  })
+
+  -- Set up lspconfig.
+  --local capabilities = require('cmp_nvim_lsp').default_capabilities()
+  -- Replace <YOUR_LSP_SERVER> with each lsp server you've enabled.
+  --require('lspconfig')['<YOUR_LSP_SERVER>'].setup {
+    --capabilities = capabilities
+  --}
+--}}} EDIT BROWSER TEXTBOXES
+--{{{ KANBAN BOARDS:   KANBAN.NVIM
+    require("kanban").setup({
+        markdown = {
+            description_folder = "./tasks/",  -- Path to save the file corresponding to the task.
+            list_head = "## ",
+        }
+    })
 EOF
-"--}}} IMG-PASTE
+"--}}} EDIT BROWSER TEXTBOXES
 
 " DEVELOPMENT RELATED
-"--{{{ OUTLINER:                 TAGBAR (C-tags based outliner): <l>go = TagbarToggle
+"--{{{ OUTLINER:                 TAGBAR (C-tags based outliner): <l>so = TagbarToggle
 lua << EOF
     vim.keymap.set({ 'n', 'v', 'o' }, 'so',  ':TagbarToggle<CR>', { remap = false }) -- noremap <leader>go :TagbarToggle<CR>
 --}}} OUTLINER
@@ -388,15 +576,15 @@ lua << EOF
     vim.keymap.set('n', '<C-k>', ':OmniSharpGotoDefinition<CR>') -- nmap <C-k> :OmniSharpGotoDefinition<CR>
 --}}} C# LSP-alternative
 --{{{ VSCODE COMP LAYER(LSP):   COC.NVIM
-     -- List of extansions for coc.nvim to be installed automatically
-    vim.g.coc_global_extensions = {'coc-sh', 'coc-cmake', 'coc-html', 'coc-json', 'coc-phpls', 'coc-pyright', 'coc-tsserver'} -- let g:coc_global_extensions=[ 'coc-sh', 'coc-pyright' ]
+--   -- List of extansions for coc.nvim to be installed automatically
+--  vim.g.coc_global_extensions = {'coc-sh', 'coc-cmake', 'coc-html', 'coc-json', 'coc-phpls', 'coc-pyright', 'coc-tsserver'} -- let g:coc_global_extensions=[ 'coc-sh', 'coc-pyright' ]
 
-    local disableExCommandLine = function()
-        if (string.match(vim.api.nvim_buf_get_name(0), "CocTree%d")) then
-            vim.api.nvim_buf_set_keymap(0, "n", ":", ":", {silent = true, noremap = true})
-        end
-    end
-    vim.api.nvim_create_autocmd( {"BufEnter"}, {callback = disableExCommandLine} )
+--  local disableExCommandLine = function()
+--      if (string.match(vim.api.nvim_buf_get_name(0), "CocTree%d")) then
+--          vim.api.nvim_buf_set_keymap(0, "n", ":", ":", {silent = true, noremap = true})
+--      end
+--  end
+--  vim.api.nvim_create_autocmd( {"BufEnter"}, {callback = disableExCommandLine} )
 EOF
 "}}} VSCode compatibility layer, LSP
 " TODO:
@@ -524,4 +712,32 @@ EOF
 " nnoremap <silent><leader>du <cmd>lua require('dapui').toggle()<CR>
 " nnoremap <silent><leader>de <cmd>lua require('dapui').eval()<CR>
 " vnoremap <silent><leader>de <cmd>lua require('dapui').eval()<CR>
+"--}}} DEBUGGING
+"DEBUGGING
+
+"--{{{ TEMPORARY
+    function! NextClosedFold(dir)
+        let cmd = 'norm!z'..a:dir
+        let view = winsaveview()
+        let [l0, l, open] = [0, view.lnum, 1]
+        while l != l0 && open
+            exe cmd
+            let [l0, l] = [l, line('.')]
+            let open = foldclosed(l) < 0
+        endwhile
+        if open
+            call winrestview(view)
+        endif
+    endfunction
+
+    function! RepeatCmd(cmd) range abort
+        let n = v:count < 1 ? 1 : v:count
+        while n > 0
+            exe a:cmd
+            let n -= 1
+        endwhile
+    endfunction
+
+    nnoremap <silent> <leader>zj :<c-u>call RepeatCmd('call NextClosedFold("j")')<cr>
+    nnoremap <silent> <leader>zk :<c-u>call RepeatCmd('call NextClosedFold("k")')<cr>
 "--}}} DEBUGGING
