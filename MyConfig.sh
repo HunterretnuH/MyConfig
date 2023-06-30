@@ -4,7 +4,7 @@
 
 #{ FUNCTIONS
 
-    source ./common_functions.sh $BASH_SOURCE
+    source ./lib/common_functions.sh $BASH_SOURCE
 
     function print_help() { #{
         echo -e "MyConfig.sh -(heiI) <device>\n" 
