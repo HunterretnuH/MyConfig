@@ -1,0 +1,38 @@
+<span face="monospace"><b>              Shell keybindings</b>
+<b>[S]+Enter</b> ......................... Terminal
+<b>[S]+B</b> .......................... Web browser
+<b>[S]+V</b> .......................... Text editor
+<b>[S]+F</b> ......................... File manager
+<b>[S]+N</b> .................. Notification center
+<b>[S]+S</b> ....................... Shell settings
+<b>[S]+E</b> ................... Application drawer
+<b>[S]+[Shift]+?</b> ............... Show/hide help
+⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼
+<b>[S]+[Shift]+Q</b> .................... Kill task
+<b>[S]+[Ctrl]+Q</b> ..................... Exit menu
+<b>[S]+[Ctrl]+L</b> ................... Lock screen
+<b>[S]+[Ctrl]+R</b> ................... Reload sway
+⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼
+<b>[S]+number</b> ................ Switch workspace
+<b>[S]+[Shift]+number</b> ....... Move to workspace
+<b>[S]+arrows*</b> ..................... Move focus
+<b>[S]+[Shift]+arrows*</b> ......... Move container
+<b>[Alt]+Tab</b> ................... Next workspace
+<b>[Alt]+Tab</b> ............... Previous workspace
+<b>[S]+X</b> ......................... Split x axis
+<b>[S]+Y</b> ......................... Split y axis
+<b>[S]+[Shift]+C</b> ................. Toggle split
+<b>[S]+c</b> ........................ Toggle layout
+<b>[S]+[Shift]+Space</b> .......... Toggle floating
+<b>[S]+[Shift]+B</b> ................ Toggle border
+<b>[S]+[Shift]+F</b> ................... Fullscreen
+<b>[S]+R</b> ................ Resize container/gaps
+<b>[S]+[Shift]+minus</b> ....... Move to scratchpad
+<b>[S]+minus</b> .................. Show scratchpad
+⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼
+<b>PrtScr</b> .......................... Screenshot
+<b>[Ctrl]+PrtScr</b> ........... Screenshot display
+<b>[Shift]+[Ctrl]+PrtScr</b> ........ S-shot region
+<b>[S]+[Shift]+[Ctrl]+PrtScr</b> .... S-shot window</span>
+
+<span face="monospace" size="small">[S] = Super/Win key*</span>

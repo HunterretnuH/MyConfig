@@ -1,0 +1,6 @@
+set $term kitty
+set $browser firefox
+set $filemanager caja
+set $editor kitty bash --rcfile ~/MyScripts/nvim_launcher.bashrc
+set $launcher nwg-drawer
+set $exit nwg-bar -p center -a middle -i 48 -s MySwayQuit.css
