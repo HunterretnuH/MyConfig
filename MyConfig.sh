@@ -118,7 +118,7 @@
             fi
         fi
 
-        USER_HOME_DIR="/home/$USER"
+        USER_HOME_DIR=${$USER_HOME_DIR:-"/home/$USER"}
 
         if   [ -n "$IMPORT" ]; then
             #Create directory and configuration file for device if it doesn't exist
@@ -261,7 +261,7 @@
         file .config/pureline/pureline.conf             # Config
     fi
 
-    if [ -n "$DUAL_FUNCTION_KEYS" ]; then
+    if [ -n "$DUAL_FUNCTION_KEYS" ]; then                                  # TODO: Move to stage4 of MySetup
         program interception-dual-function-keys
         file /etc/interception/dual-function-keys/caps-2-ctrl-and-esc.yaml # Dual-function-keys config
         file /etc/interception/udevmon.d/my-udevmon.yaml                   # Config for udevmon (monitors
