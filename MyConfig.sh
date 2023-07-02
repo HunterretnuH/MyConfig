@@ -39,8 +39,13 @@
     function file() { #{
         # $1 - path to dir or file (relative to USER_HOME_DIR)
         FS_NODE=$1
-        LOCAL_FS_NODE="./devices/$DEVICE/home/$FS_NODE"
-        REMOTE_FS_NODE="$USER_HOME_DIR/$FS_NODE"
+        if [[ "${FS_NODE:0:1}" == "/" ]]; then
+            LOCAL_FS_NODE="./devices/$DEVICE/${FS_NODE:1}"
+            REMOTE_FS_NODE="$FS_NODE"
+        else
+            LOCAL_FS_NODE="./devices/$DEVICE/home/$FS_NODE"
+            REMOTE_FS_NODE="$USER_HOME_DIR/$FS_NODE"
+        fi
 
         if [ -n "$EXPORT" ]; then
             echo "Exporting ~/$FS_NODE"
@@ -250,6 +255,16 @@
 
     if [ -n "$PURELINE" ]; then
         file .config/pureline/pureline.conf             # Config
+    fi
+
+    if [ -n "$PURELINE" ]; then
+        file .config/pureline/pureline.conf             # Config
+    fi
+
+    if [ -n "$DUAL_FUNCTION_KEYS" ]; then
+        program interception-dual-function-keys
+        file /etc/interception/dual-function-keys/caps-2-ctrl-and-esc.yaml # Dual-function-keys config
+        file /etc/interception/udevmon.d/my-udevmon.yaml                   # Config for udevmon (monitors
     fi
 
     # TODO: Add E-mail(evolutiono/thunderbird), cliphist
