@@ -2,8 +2,8 @@ output "eDP-1" {
     mode  2560x1600@165.019Hz
     pos 0 0
     transform normal
-    scale 1.1
-    scale_filter nearest
+    scale 1.2
+    scale_filter linear
     adaptive_sync off
     dpms on
 }

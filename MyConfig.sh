@@ -8,8 +8,9 @@
 
     function print_help() { #{
         echo -e "MyConfig.sh -(heiI) <device>\n" 
-        echo -e "Description: Simple utility to import and export config files and install programs."
-        echo -e "             NOTE: <device> is required if \$MY_DEVICE is not set. <device> is directory name inside ./devices/ directory\n"
+        echo -e "Description:\n"
+        echo -e "    Simple utility to import and export config files and install programs."
+        echo -e "    NOTE: <device> is required if \$MY_DEVICE is not set. <device> is directory name inside ./devices/ directory\n"
         echo -e "Options:"
         echo -e "    -h, --help     - prints help message."
         echo -e "    -e, --export   - copies files and directories to home directory from user home folder."
@@ -37,9 +38,7 @@
 
     function file() { #{
         # $1 - path to dir or file (relative to USER_HOME_DIR)
-        # $2 - "TRUE" if $1 is directory
         FS_NODE=$1
-        IS_DIR=$2
         LOCAL_FS_NODE="./devices/$DEVICE/home/$FS_NODE"
         REMOTE_FS_NODE="$USER_HOME_DIR/$FS_NODE"
 
@@ -47,8 +46,8 @@
             echo "Exporting ~/$FS_NODE"
 
             if [ -e $LOCAL_FS_NODE ]; then
-                if [[ "$IS_DIR" == "TRUE" ]]; then REMOTE_FS_NODE=$(dirname $REMOTE_FS_NODE); fi
-                mkdir -p $(dirname $REMOTE_FS_NODE)
+                REMOTE_FS_NODE=$(dirname $REMOTE_FS_NODE)
+                mkdir -p $REMOTE_FS_NODE
                 cp -r $LOCAL_FS_NODE $REMOTE_FS_NODE
             else
                 echo "Error: Path $LOCAL_FS_NODE not found. Skipped during export."
@@ -58,9 +57,8 @@
             echo "Importing ~/$FS_NODE"
 
             if [ -e $REMOTE_FS_NODE ]; then
-                if [[ "$IS_DIR" == "TRUE" ]]; then LOCAL_FS_NODE=$(dirname $LOCAL_FS_NODE); fi
-                mkdir -p $(dirname $LOCAL_FS_NODE)
-                mkdir -p $(dirname $LOCAL_FS_NODE)
+                LOCAL_FS_NODE=$(dirname $LOCAL_FS_NODE)
+                mkdir -p $LOCAL_FS_NODE
                 cp -r $REMOTE_FS_NODE $LOCAL_FS_NODE
             else
                 echo "Error: Path $REMOTE_FS_NODE not found. Skipped during import."
@@ -69,7 +67,11 @@
     } #}
 
     function dir() { #{
-        file $1 "TRUE"
+        file $@
+    } #}
+
+    function link() { #{
+        file $@
     } #}
 
     function initialize_globals() { #{
@@ -136,6 +138,10 @@
     trap error ERR
 
     initialize_globals $@
+
+    if [ -n "$GENERAL" ]; then
+        link .config/.local/MyPrograms
+    fi
 
     if [ -n "$BASH" ]; then
         file .bashrc                                    # Config
@@ -226,9 +232,28 @@
     fi
 
     if [ -n "$ZATHURA" ]; then
-        program zathura
-        dir .config/zathura
+        program zathura 
+        dir .config/zathura/zathurarc                   # Config
     fi
+
+    if [ -n "$TASKWARRIOR" ]; then
+        program task
+        file .config/task/taskrc                        # Config
+       #dir .config/task/hooks                          # Hooks
+    fi
+
+    if [ -n "$KEEPASSXC" ]; then
+        program keepassxc
+        file .config/KeePass/KeePass.config.xml         # Config
+    fi
+
+
+    if [ -n "$PURELINE" ]; then
+        file .config/pureline/pureline.conf             # Config
+    fi
+
+    # TODO: Add E-mail(evolutiono/thunderbird), cliphist
+
 
     #TODO: MyConfig should add below line to .bashrc if it ist'nt already there:
     #      $MY_DEVICE=<device_name>

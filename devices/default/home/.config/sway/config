@@ -111,6 +111,8 @@
 #--1 Launching default apps, exit menu, screen lock, shell config, help
     set $opt fullscreen disable
     set $myWiki kitty --session=~/.config/kitty/sessions/kitty-wikivim.session 
+    set $myKanban kitty --session=~/.config/kitty/sessions/kitty-kabmat.session
+    set $myTasks kitty --session=~/.config/kitty/sessions/kitty-vit.session
     bindsym $Mod+b            $opt, exec $browser                   # Browser (TEMPORARY)
     bindsym $Mod+o            $opt, exec $dock                      # Dock (it could be used to launch apps from shortcut i.e. f, t)
     #bindsym $Mod+b            workspace name "Browser"
@@ -125,8 +127,8 @@
     bindsym $Mod+v            $opt, exec $myWiki                    # My Wiki (TEMPORARY)
     bindsym $Mod+f            $opt, exec $filemanager               # File manager (TEMPORARY)
     bindsym $Mod+n            $opt, exec swaync-client -t           # Notification manager
-    bindsym $Mod+g            $opt, exec kitty kabmat               # Kanban Board (TEMPORARY)
-    bindsym $Mod+t            $opt, exec kitty vit                  # Kanban Board (TEMPORARY)
+    bindsym $Mod+g            $opt, exec $myKanban                  # Kanban Board (TEMPORARY)
+    bindsym $Mod+t            $opt, exec $myTasks                   # Kanban Board (TEMPORARY)
     bindsym $Mod+space        $opt, exec $launcher                  # Application launcher
     bindsym $Mod+Return       $opt, exec kitty                      # Terminal
     bindsym $Mod+Ctrl+l             exec nwg-lock                   # Lock screen

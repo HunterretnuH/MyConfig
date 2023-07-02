@@ -10,7 +10,8 @@ export EDITOR="nvim"
 export GOPATH="/home/$USER/MyPrograms/go"
 export MOZ_ENABLE_WAYLAND=1
 SCREENSHOT_DIR="$HOME/Documents/Screenshots"
-export MESA_LOADER_DRIVER_OVERRIDE=radeonsi                                         # Test if impacts firefox launch
+QT_QPA_PLATFORMTHEME=qt5ct
+#export MESA_LOADER_DRIVER_OVERRIDE=radeonsi                                         # Test if impacts firefox launch
 export __EGL_VENDOR_LIBRARY_FILENAMES=/usr/share/glvnd/egl_vendor.d/50_mesa.json    # If not then remove
 export AMD_DEBUG=nodcc
 
@@ -65,7 +66,7 @@ bind -m vi-command -x '"DD": kill_line_to_clipboard'
 
 #PURELINE
 if [ "$TERM" != "linux" ]; then
-    source ~/MyPrograms/from_git/pureline/pureline ~/.pureline.conf
+    source ~/MyPrograms/from_git/pureline/pureline ~/.config/pureline/pureline.conf
 fi
 
 #[[ ${BLE_VERSION-} ]] && ble-attach
