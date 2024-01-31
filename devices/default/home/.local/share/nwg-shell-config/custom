@@ -48,5 +48,8 @@
   "gtklock-playerctl-position": "top-right",
   "gtklock-playerctl-show-hidden": true,
   "launcher-gtk-theme": "",
-  "launcher-gtk-icon-theme": ""
+  "launcher-gtk-icon-theme": "",
+  "dock-startup-delay": 0,
+  "launcher-force-theme": false,
+  "dock-layer": "overlay"
 }

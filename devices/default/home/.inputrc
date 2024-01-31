@@ -1,21 +1,40 @@
-set colored-stats on
-set colored-completion-prefix on
-set completion-ignore-case on
-set completion-map-case on
-set show-all-if-ambiguous on
-set show-all-if-unmodified on
-set menu-complete-display-prefix on
-"\t":menu-complete
-"\e[Z": menu-complete-backward
+################################# READLINE CONFIG ##################################
 
-#VI MODE SPECIFIC SETTINGS
-set editing-mode vi
-set show-mode-in-prompt
-set vi-ins-mode-string \1\e[5 q\2
-set vi-cmd-mode-string \1\e[2 q\2
+#####################     SETTING    #####################
+#--1 General setting
+    set colored-stats on                # Color path autocompletion propositions (uses LS_COLORS)
+    set colored-completion-prefix on    # Color differently common part of path autocompletion propositions
+    set completion-ignore-case on       # Make autocompletion case-insensitive
+    set completion-map-case on          # "_" and "-" are equivalent for case in-sensitive search
+    set show-all-if-ambiguous on        # Autocomplete on first key press (Tab)
+    set show-all-if-unmodified on       # 
+    set menu-complete-display-prefix on # Show first completion propositions, then cycle through them
 
-$if mode=vi
-    #set keymap vi-command
-    "\C-l": clear-screen
-$endif
-"\C-e": alias-expand-line
+#--1 Vi mode settings
+    # Use vi editing mode
+    set editing-mode vi
+    # Show vi mode in prompt
+    set show-mode-in-prompt
+    # Use blinking line for input mode
+    set vi-ins-mode-string \1\e[5 q\2
+    # Use steady block for normal mode
+    set vi-cmd-mode-string \1\e[2 q\2
+
+#++#++#++#++#++#++#++# END OF SETTINGS #++#++#++#++#++#++#++#
+
+#####################     BINDINGS    #####################
+#--1 General bindings
+    "\t": menu-complete                 # Show completion propositions and cycling through them using Tab
+    "\e[Z": menu-complete-backward      # Cycle backward through completion propositions using Shift+Tab
+    "\C-h": backward-kill-word          # Delete word using Ctrl+Backspace
+    "\C-e": alias-expand-line       # Expand aliases using Ctrl+e
+    "\C-e\C-e": shell-expand-line       # Expand aliases using Ctrl+e
+
+#--1 Vi mode only bindings
+    $if mode=vi                         # Mappings to be aplied only when using vi normal mode
+        "\C-l": clear-screen            # Clear screen using Ctrl+l
+    $endif
+
+#++#++#++#++#++#++#++# END OF SETTINGS #++#++#++#++#++#++#++#
+
+# vim: foldmethod=marker foldmarker=#--,#++

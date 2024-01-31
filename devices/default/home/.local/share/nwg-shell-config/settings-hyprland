@@ -118,5 +118,16 @@
   "update-indicator-on": false,
   "update-indicator-interval": 30,
   "update-command": "nwg-system-update",
-  "appindicator": true
+  "appindicator": true,
+  "dwindle-smart_split": false,
+  "dwindle-smart_resizing": true,
+  "misc-use-settings": true,
+  "misc-disable_hyprland_logo": false,
+  "misc-vrr": 0,
+  "misc-mouse_move_enables_dpms": false,
+  "misc-key_press_enables_dpms": false,
+  "misc-layers_hog_keyboard_focus": true,
+  "misc-focus_on_activate": false,
+  "misc-hide_cursor_on_touch": true,
+  "misc-mouse_move_focuses_monitor": true
 }

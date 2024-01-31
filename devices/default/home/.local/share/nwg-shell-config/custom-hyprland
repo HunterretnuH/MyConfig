@@ -49,5 +49,7 @@
   "gtklock-powerbar-linked-buttons": false,
   "gtklock-playerctl-art-size": 64,
   "gtklock-playerctl-position": "top-right",
-  "gtklock-playerctl-show-hidden": true
+  "gtklock-playerctl-show-hidden": true,
+  "launcher-force-theme": false,
+  "dock-layer": "overlay"
 }

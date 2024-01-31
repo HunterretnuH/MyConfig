@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # vi: foldmethod=marker foldmarker=#{,#}
 #
 
@@ -7,7 +7,7 @@
     source ./lib/common_functions.sh $BASH_SOURCE
 
     function print_help() { #{
-        echo -e "MyConfig.sh -(heiI) <device>\n" 
+        echo -e "MyConfig.sh -(heiI) <device>\n"
         echo -e "Description:\n"
         echo -e "    Simple utility to import and export config files and install programs."
         echo -e "    NOTE: <device> is required if \$MY_DEVICE is not set. <device> is directory name inside ./devices/ directory\n"
@@ -30,7 +30,7 @@
     } #}
 
     function program() { #{
-    # $1 - program name
+        # $1 - program name
         if [ -n "$INSTALL" ]; then
             $INSTALL_COMMAND $1
         fi
@@ -42,31 +42,33 @@
         if [[ "${FS_NODE:0:1}" == "/" ]]; then
             LOCAL_FS_NODE="./devices/$DEVICE/${FS_NODE:1}"
             REMOTE_FS_NODE="$FS_NODE"
+	    LOC=""
         else
             LOCAL_FS_NODE="./devices/$DEVICE/home/$FS_NODE"
             REMOTE_FS_NODE="$USER_HOME_DIR/$FS_NODE"
+	    LOC="~/"
         fi
 
         if [ -n "$EXPORT" ]; then
-            echo "Exporting ~/$FS_NODE"
+            echo "${PREFIX}Exporting ${LOC}$FS_NODE"
 
             if [ -e $LOCAL_FS_NODE ]; then
                 REMOTE_FS_NODE=$(dirname $REMOTE_FS_NODE)
                 mkdir -p $REMOTE_FS_NODE
                 cp -r $LOCAL_FS_NODE $REMOTE_FS_NODE
             else
-                echo "Error: Path $LOCAL_FS_NODE not found. Skipped during export."
+                echo "${PREFIX}Error: Path $LOCAL_FS_NODE not found. Skipped during export."
             fi
 
         elif [ -n "$IMPORT" ]; then
-            echo "Importing ~/$FS_NODE"
+            echo "${PREFIX}Importing ${LOC}$FS_NODE"
 
             if [ -e $REMOTE_FS_NODE ]; then
                 LOCAL_FS_NODE=$(dirname $LOCAL_FS_NODE)
                 mkdir -p $LOCAL_FS_NODE
                 cp -r $REMOTE_FS_NODE $LOCAL_FS_NODE
             else
-                echo "Error: Path $REMOTE_FS_NODE not found. Skipped during import."
+                echo "${PREFIX}Error: Path $REMOTE_FS_NODE not found. Skipped during import."
             fi
         fi
     } #}
@@ -82,6 +84,8 @@
     function initialize_globals() { #{
         # usage: initialize_globals $@
 
+        PREFIX="    MyConfig: "
+
         FLAG=$1
         DEVICE=${2:-$MY_DEVICE}
 
@@ -96,33 +100,26 @@
         elif [[ "$FLAG" == "-I" || $FLAG == "--install" ]]; then
             INSTALL=TRUE
         elif [[ "$FLAG" == "-h" || $FLAG == "--help"    ]]; then
-            print_help; exit 0 
+            print_help; exit 0
         else
             print_help; exit 1
         fi
 
         if [ $# -gt 2 ]; then
-            echo "Error: Too many arguments were used."
+            echo "${PREFIX}Error: Too many arguments were used."
             exit 1
         fi
 
         if [ -z "$DEVICE" ]; then
-            echo "Error: MY_DEVICE is not set and <device> was not provided."
+            echo "${PREFIX}Error: MY_DEVICE is not set and <device> was not provided."
             exit 1
         fi
 
-        if [ -n "$INSTALL" ]; then
-            if [ -z "$INSTALL_COMMAND" ]; then
-                echo "INSTALL_COMMAND is not set."
-                exit 1
-            fi
-        fi
-
-        USER_HOME_DIR=${$USER_HOME_DIR:-"/home/$USER"}
+        USER_HOME_DIR=${USER_HOME_DIR:-"/home/$USER"}
 
         if   [ -n "$IMPORT" ]; then
             #Create directory and configuration file for device if it doesn't exist
-            if [ ! -d ./devices/$DEVICE ]; then 
+            if [ ! -d ./devices/$DEVICE ]; then
                 mkdir -p ./devices/$DEVICE/home
                 cp  conf.sh.template ./devices/$DEVICE/conf.sh
             fi
@@ -132,6 +129,13 @@
         fi
 
         source ./devices/$DEVICE/conf.sh
+
+        if [ -n "$INSTALL" ]; then
+            if [ -z "$INSTALL_COMMAND" ]; then
+                echo "${PREFIX}INSTALL_COMMAND is not set."
+                exit 1
+            fi
+        fi
     } #}
 
 #}
@@ -139,13 +143,12 @@
 #{ CONFIGS TO IMPORT/EXPORT
 
     # Set quit on error
-    set -e
     trap error ERR
 
     initialize_globals $@
 
     if [ -n "$GENERAL" ]; then
-        link .config/.local/MyPrograms
+        link .config/.local/MyPrograms  # TODO: Doesn't work
     fi
 
     if [ -n "$BASH" ]; then
@@ -154,6 +157,20 @@
 
     if [ -n "$READLINE" ]; then
         file .inputrc                                   # Config
+    fi
+
+    if [ -n "$LESS" ]; then
+        program less
+        file .lesskey                                   # Config
+    fi
+
+    if [ -n "$I3" ]; then
+        program sway
+        file .config/i3/config            # Config
+        file .config/i3/autostart         # Config - autostart
+        file .config/i3/outputs           # Config - outputs
+        file .config/i3/variables         # Config - variables
+        file .config/i3/workspaces        # Config - workspaces
     fi
 
 
@@ -192,14 +209,14 @@
 
         file .config/nwg-panel/MySwayPanel                     # Sway nwg-panel settings         (NWG managed)
         file .config/nwg-panel/MySwayPanel.css                 # Sway nwg-panel .css file        (NWG managed defaults?)
-        file .config/nwg-panel/MyHyprlandPanel                 # Hyprland nwg-panel settings     (NWG managed)
+        file .config/nwg-panel/MyHyprlandPanel                 # Hyprland nwg-panel settings     (NWG managed) (TODO Fix - not found)
         file .config/nwg-panel/MyHyprlandPanel.css             # Hyprland nwg-panel .css file    (NWG managed defaults?)
 
         file .local/share/nwg-shell-config/custom              # Sway NWG Shell config for Sway       (NWG managed)
-        file .local/share/nwg-shell-config/settings            # Sway NWG Shell settings for Sway      (NWG managed)
-        file .local/share/nwg-shell-config/help.pango          # Sway help file                  (NWG managed)
         file .local/share/nwg-shell-config/custom-hyprland     # Hyprland NWG Shell config for Hyprland   (NWG managed)
+        file .local/share/nwg-shell-config/settings            # Sway NWG Shell settings for Sway      (NWG managed)
         file .local/share/nwg-shell-config/settings-hyprland   # Hyprland NWG Shell settings for Hyprland (NWG managed)
+        file .local/share/nwg-shell-config/help.pango          # Sway help file                  (NWG managed)
         file .local/share/nwg-shell-config/help-hyprland.pango # Hyprland help file              (NWG managed)
 
         file .local/share/nwg-look/gsettings                   # GTK programs appereance         (NWG managed)
@@ -221,23 +238,24 @@
     fi
 
     if [ -n "$NEOVIM" ]; then
-        program neovim
-        file .config/nvim/init.vim                      # Config
+        program neovim                                  # Text editor
+        program python-pynvim                           # Required for ssome plugins
+        file .config/nvim/init.lua                      # Config
+        file .config/nvim/config.vim                    # Coc-nvim LSP settings
         file .config/nvim/after/ftplugin/html.vim       # Html FTPlugin
-        file .config/nvim/coc-settings.json             # Coc-nvim LSP settings
-        file .config/nvim/lua/coc-init.lua              # Coc-nvim init script
     fi
 
     if [ -n "$RANGER" ]; then
         program ranger
-        file .config/ranger/rc.conf ~/.config/ranger/   # Config
-        file .config/ranger/rifle.conf                  # Config of default programs used to open files 
-        echo -e "\tWARNING: File .config/ranger/rifle.conf can change with updates."
-        file .local/share/ranger/bookmarks              # Bookmarks
+        file .config/ranger/rc.conf                     # Config
+        file .config/ranger/rifle.conf                  # Config of default programs used to open files
+        echo -e "${PREFIX}\tWARNING: File .config/ranger/rifle.conf can change with updates."
+        file .local/share/ranger/bookmarks              # Bookmarks (DATA)
     fi
 
     if [ -n "$ZATHURA" ]; then
-        program zathura 
+        program zathura                                 # Document viever
+        program zathura-pdf-mupdf                       # PDF Support for Zathura
         dir .config/zathura/zathurarc                   # Config
     fi
 
@@ -247,9 +265,13 @@
        #dir .config/task/hooks                          # Hooks
     fi
 
+    if [ -n "$VIT" ]; then
+        program vit                                     # GUI for Taskwarrior
+    fi
+
     if [ -n "$KEEPASSXC" ]; then
         program keepassxc
-        file .config/KeePass/KeePass.config.xml         # Config
+        file .config/keepassxc/keepassxc.ini            # Config
     fi
 
 
@@ -259,6 +281,16 @@
 
     if [ -n "$PURELINE" ]; then
         file .config/pureline/pureline.conf             # Config
+    fi
+
+    if [ -n "$FIREFOX" ]; then
+        program firefox
+    fi
+
+    if [ -n "$DISCORD" ]; then                          # Requires FIREFOX for Discord profile
+        file .local/share/applications/discord.desktop  # Config
+        file .local/share/icons/discord.png             # Icon
+        # TODO Option: Move to stage4 of MySetup
     fi
 
     if [ -n "$DUAL_FUNCTION_KEYS" ]; then                                  # TODO: Move to stage4 of MySetup
@@ -267,11 +299,11 @@
         file /etc/interception/udevmon.d/my-udevmon.yaml                   # Config for udevmon (monitors
     fi
 
-    # TODO: Add E-mail(evolutiono/thunderbird), cliphist
+    # TODO: Add E-mail(evolutiono/thunderbird), cliphist, piper
 
 
     #TODO: MyConfig should add below line to .bashrc if it ist'nt already there:
     #      $MY_DEVICE=<device_name>
-    #Configs to add: .pufeline.conf, mpv.conf
+    #Configs to add: mpv.conf
 
 #}

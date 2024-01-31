@@ -1,21 +1,29 @@
-################################# SWAY CONFIG ##################################
-# Read `man 5 sway` for a complete reference.
+################################# I3 CONFIG ##################################
+# i3 config file (v4)
 #--1 NWG-Shell managed settings:    i.e. outputs, workspaces, keyboard, mouse, some default apps
     # The files we include below will be created / overwritten by nwg-shell tools
-    include variables
-    include outputs
+    #include variables
+        set $term kitty
+        set $browser firefox
+        set $filemanager nemo
+        set $editor kitty bash --rcfile ~/MyScripts/nvim_launcher.bashrc
+        set $launcher nwg-drawer
+        set $exit nwg-bar -p center -a middle -i 48 -s MySwayQuit.css
+    #include outputs
+        exec xrandr --output Virtual-1 --mode "1920x1080" --auto
+        exec xrandr --output Virtual-2 --mode "1920x1080" --auto
     include autostart
     include workspaces
-    include keyboard
-    include pointer
-    include touchpad
+    #include keyboard
+    #include pointer
+    #include touchpad
 #++
-
 
 #####################    GENERAL SETTINGS    #####################
 #--1 Appereance:                    wallpaper, borders, gaps, font
     #--2 Wallpaper
-        exec ~/.azotebg
+        exec --no-startup-id feh --bg-scale /usr/share/backgrounds/nwg-shell.jpg
+        #exec ~/.azotebg
 
     #--2 Borders
         for_window      [title="^.*"] border pixel 3, title_format "<b> %class >> %title </b>"
@@ -42,8 +50,8 @@
         popup_during_fullscreen         smart
 
         #--3 Configuration of windows floating and borders for common apps and window names
-            for_window [app_id="(?i)(?:blueman-manager|azote|gnome-disks)"]                      floating enable
-            for_window [app_id="(?i)(?:pavucontrol|nm-connection-editor|gsimplecal|galculator)"] floating enable
+            #for_window [app_id="(?i)(?:blueman-manager|azote|gnome-disks)"]                      floating enable
+            #for_window [app_id="(?i)(?:pavucontrol|nm-connection-editor|gsimplecal|galculator)"] floating enable
             #for_window [app_id="(?i)(?:firefox|chromium)"]                                       border none
             for_window [title="(?i)(?:copying|deleting|moving)"]                                 floating enable
 
@@ -68,9 +76,9 @@
 
     #--2 Lid close effect
         #Turn off screen on lid closed
-        set $laptop eDP-1
-        bindswitch lid:on  output $laptop disable
-        bindswitch lid:off output $laptop enable
+        #set $laptop eDP-1
+        #bindswitch lid:on  output $laptop disable
+        #bindswitch lid:off output $laptop enable
 
 #++#++#++#++#++#++#++# END OF GENERAL SETTINGS 
 
@@ -113,8 +121,10 @@
     set $myWiki kitty --session=~/.config/kitty/sessions/kitty-wikivim.session 
     set $myKanban kitty --session=~/.config/kitty/sessions/kitty-kabmat.session
     set $myTasks kitty --session=~/.config/kitty/sessions/kitty-vit.session
-    bindsym $Mod+b            $opt, exec $browser         # Browser (TEMPORARY)
-    bindsym $Mod+o            $opt, exec $dock            # Dock (it could be used to launch apps from shortcut i.e. f, t)
+    # Browser (TEMPORARY)
+    bindsym $Mod+b            $opt, exec $browser         
+    # Dock (it could be used to launch apps from shortcut i.e. f, t)
+    bindsym $Mod+o            $opt, exec $dock            
     # bindsym $Mod+b            workspace name "Browser"
     # bindsym $Mod+f            workspace name "FileManager"
     # bindsym $Mod+v            workspace name "MyWiki"
@@ -124,19 +134,32 @@
     # bindsym $Mod+Shift+f      move container to workspace name FileManager; workspace name FileManager
     # bindsym $Mod+Shift+v      move container to workspace name MyWiki;      workspace name MyWiki;
     # bindsym $Mod+Shift+t      move container to workspace name Tasks;       workspace name Tasks;
-    bindsym $Mod+v            $opt, exec $myWiki          # My Wiki (TEMPORARY)
-    bindsym $Mod+f            $opt, exec $filemanager     # File manager (TEMPORARY)
-    bindsym $Mod+n            $opt, exec swaync-client -t # Notification manager
-    bindsym $Mod+g            $opt, exec $myKanban        # Kanban Board (TEMPORARY)
-    bindsym $Mod+t            $opt, exec $myTasks         # Kanban Board (TEMPORARY)
-    bindsym $Mod+space        $opt, exec $launcher        # Application launcher
-    bindsym $Mod+Return       $opt, exec $term            # Terminal
-    bindsym $Mod+Ctrl+l             exec nwg-lock         # Lock screen
-    bindsym $Mod+Ctrl+s             exec nwg-shell-config # Shell settings
-    bindsym $Mod+question           exec nwg-shell-help   # Toggle help display
-    bindsym $Mod+Ctrl+q             exec $exit            # Exit menu
-    bindsym $Mod+Shift+q                 kill             # Kill focused window
-    bindsym $Mod+Ctrl+r             exec swaymsg reload   # Reload the configuration file TODO: Check why "exec swaymsg..." is necessary
+    # My Wiki (TEMPORARY)
+    bindsym $Mod+v            $opt, exec $myWiki          
+    # File manager (TEMPORARY)
+    bindsym $Mod+f            $opt, exec $filemanager     
+    # Notification manager
+    bindsym $Mod+n            $opt, exec swaync-client -t 
+    # Kanban Board (TEMPORARY)
+    bindsym $Mod+g            $opt, exec $myKanban        
+    # Kanban Board (TEMPORARY)
+    bindsym $Mod+t            $opt, exec $myTasks         
+    # Application launcher
+    bindsym $Mod+space        $opt, exec $launcher        
+    # Terminal
+    bindsym $Mod+Return       $opt, exec $term
+    # Lock screen
+    bindsym $Mod+Ctrl+l             exec nwg-lock         
+    # Shell settings
+    bindsym $Mod+Ctrl+s             exec nwg-shell-config 
+    # Toggle help display
+    bindsym $Mod+question           exec nwg-shell-help   
+    # Exit menu
+    bindsym $Mod+Ctrl+q             exec $exit            
+    # Kill focused window
+    bindsym $Mod+Shift+q                 kill             
+    # Reload the configuration file TODO: Check why "exec swaymsg..." is necessary
+    bindsym $Mod+Ctrl+r             exec swaymsg reload   
 
 #--1 Screenshots
     bindsym Print                       exec screenshot display_preview
@@ -164,7 +187,7 @@
 
 #--1 Mouse modifier
     # Drag/resize windows by holding down $mod and mouse button ( normal: left-drag, right-resize| inverse: opposite).
-    floating_modifier $Mod normal 
+    floating_modifier $Mod
 
 #++#++#++#++#++#++#++# END OF GENERAL BINDINGS
 
@@ -290,26 +313,26 @@
 #--1 Change windows/containers layout and properties i.e. floating, borders, fullscreen, sticky
     # Cycle through layouts
     bindsym $Mod+c              layout toggle tabbed stacking split
-    # Toggle split direction
-    bindsym $Mod+Shift+c        layout toggle splitv splith
-    # Toggle split direction or split layout direction
-    #bindsym $Mod+Shift+v        layout toggle split #TODO: Consider remapping
+
+    # Toggle border style
+     bindsym $Mod+Shift+c       border toggle
 
     # Select split direction (split across x or y axis)
     bindsym $Mod+x              split v
     bindsym $Mod+y              split h
 
+    # Select split layout direction (split across x or y axis)
+    bindsym $Mod+Shift+x        layout splitv
+    bindsym $Mod+Shift+y        layout splith
+
     # Toggle floating
     bindsym $Mod+Shift+e        floating toggle
 
     # Toggle fullscreen
-    bindsym $Mod+Shift+Space    fullscreen
-
-    # Toggle border style
-     bindsym $Mod+Shift+b        border toggle # is it usefull?
+    bindsym $Mod+Shift+space    fullscreen toggle 
 
     # Always on top toggle
-    bindsym $Mod+Shift+i        sticky toggle # pIn window
+    bindsym $Mod+Shift+t        sticky toggle
 
 #++#++#++#++#++#++#++# END OF CONTAINER/WINDOW BINDINGS
 

@@ -12,7 +12,7 @@
   "night-gamma": 1.0,
   "night-on": true,
   "terminal": "kitty",
-  "file-manager": "caja",
+  "file-manager": "nemo",
   "editor": "kitty bash --rcfile ~/MyScripts/nvim_launcher.bashrc",
   "browser": "firefox",
   "panel-preset": "custom",
